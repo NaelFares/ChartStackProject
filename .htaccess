@@ -1,0 +1,5 @@
+# Active la gestion des en-têtes
+<IfModule mod_headers.c>
+    # Définir la politique de sécurité du contenu
+    Header set Content-Security-Policy "script-src 'self' 'unsafe-eval' https://ajax.googleapis.com https://cdn.jsdelivr.net;"
+</IfModule>
