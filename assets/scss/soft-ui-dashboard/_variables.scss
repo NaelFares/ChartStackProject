@@ -60,7 +60,7 @@ $colors: (
 ) !default;
 // scss-docs-end colors-map
 
-$primary:       $orange !default;
+$primary:       $teal !default;
 $secondary:     $gray-500 !default;
 $info:          $blue !default;
 $success:       $green !default;
@@ -108,8 +108,8 @@ $orange-400: #fb923c !default;
 
 
 // Gradient colors
-$primary-gradient:            $orange-600 !default;
-$primary-gradient-state:      $yellow-400 !default;
+$primary-gradient:            $teal !default;
+$primary-gradient-state:      $indigo-600 !default;
 
 $secondary-gradient:          $gray-500 !default;
 $secondary-gradient-state:    $gray-200 !default;
