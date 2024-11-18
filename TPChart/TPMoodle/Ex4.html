@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcul de la somme des n premiers entiers</title>
+    <script>
+
+        var tab = [-2,1,4];
+
+        function additionne(x) {
+            return x + 2;
+        }
+
+        function affiche() {
+            for (var i = 0; i < tab.length; i++) {
+                var resultat = additionne(tab[i]);
+                alert("L'addition n°" + i  + " est égale à : " + resultat);
+            }
+        }
+
+    </script>
+</head>
+<body>
+    <h1>Additionner les valeurs d'un tableau</h1>
+    <form>
+        <button type="button" onclick="affiche()">Voir l'addition du tableau</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nombre aléatoire</title>
+    <script>
+        // Générer un nombre aléatoire entre 1 et 1024
+        var nombreAleatoire = Math.floor(Math.random() * 1024) + 1;
+        var essais = 0; // Compteur de tentatives
+
+        // Fonction pour vérifier si la chaîne est composée de chiffres
+        function is_numeric(chaine) {
+            var exp = new RegExp("^[0-9]*$", "g");
+            return exp.test(chaine);
+        }
+
+        // Fonction pour traiter la soumission du formulaire
+        function verifierNombre(event) {
+            event.preventDefault(); // Empêcher le rechargement de la page
+            var val = document.getElementById('val').value;
+
+            if (!is_numeric(val) || val === "") {
+                document.getElementById('resultat').textContent = "Veuillez entrer un nombre valide.";
+                return;
+            }
+
+            var nombreEntre = parseInt(val);
+            essais++; // Incrémenter le nombre d'essais
+
+            // Comparer le nombre entré avec le nombre aléatoire
+            if (nombreEntre < nombreAleatoire) {
+                document.getElementById('resultat').textContent = "C'est plus grand !";
+            } else if (nombreEntre > nombreAleatoire) {
+                document.getElementById('resultat').textContent = "C'est plus petit !";
+            } else {
+                document.getElementById('resultat').textContent = "Félicitations ! Vous avez trouvé le nombre en " + essais + " tentatives.";
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Nombre aléatoire</h1>
+    <p>Un nombre aléatoire a été généré entre 1 et 1024. Trouvez ce nombre. Votre nombre d'essais sera incrémenté de 1 à chaque essai.</p>
+    <form onsubmit="verifierNombre(event)">
+        <label for="val">Entrez une valeur :</label>
+        <input type="text" id="val" name="val">
+        <button type="submit">Envoyer</button>
+    </form>
+    <p id="resultat"></p>
+</body>
+</html>

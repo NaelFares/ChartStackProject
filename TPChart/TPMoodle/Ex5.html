@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcul de la somme des n premiers entiers</title>
+    <script>
+
+        var tab = [-2,1,4];
+
+        function soustrait(x) {
+            var res =  x - 2;
+
+            if(res <= 0){
+                return "Résultat négatif ou nul !";
+            } else {
+                return "Résultat positif !";
+            }
+        }
+
+        function affiche() {
+            for (var i = 0; i < tab.length; i++) {
+                var resultat = soustrait(tab[i]);
+                alert("La soustraction n°" + i  + " renvoit : " + resultat);
+            }
+        }
+
+    </script>
+</head>
+<body>
+    <h1>Soustrait les valeurs d'un tableau</h1>
+    <form>
+        <button type="button" onclick="affiche()">Voir la soustraction du tableau</button>
+    </form>
+</body>
+</html>

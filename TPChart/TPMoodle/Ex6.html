@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voir le jour de la semaine</title>
+    <script>
+
+        function jourDeLaSemaine() {
+            var date = new Date();
+            var jour = date.getDay();
+
+            switch (jour) {
+                case jour = 0 :
+                    alert("Dimanche") 
+                    break;
+                case jour = 1 :
+                    alert("Lundi") 
+                    break;
+                case jour = 2 :
+                    alert("Mardi") 
+                    break;
+                case jour = 3 :
+                    alert("Mercredi") 
+                    break;
+                case jour = 4 :
+                    alert("Jeudi") 
+                    break;
+                case jour = 5 :
+                    alert("Vendredi")
+                    break;
+                case jour = 6 :
+                    alert("Samedi") 
+                    break;
+                default :
+                    alert("Inconnu") 
+                    break;
+            }
+        }
+
+    </script>
+</head>
+<body>
+    <h1>Jour de la semaine</h1>
+    <form>
+        <button type="button" onclick="jourDeLaSemaine()">Voir le jour de la semaine</button>
+    </form>
+</body>
+</html>

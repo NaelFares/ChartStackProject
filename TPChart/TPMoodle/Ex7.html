@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecrire chaîne</title>
+    <script>
+
+        function testWhile() {
+            var demande = prompt("Saisir une chaîne de caractères contenant le caractère :" + ' " ' );
+            while (!demande.startsWith('"') || !demande.endsWith('"')) {
+                demande = prompt("Saisir une chaîne de caractères contenant le caractère :" + ' " ' );
+            }
+            alert(demande);
+        }
+
+    </script>
+</head>
+<body>
+    <h1>Ecrire chaine</h1>
+    <form>
+        <button type="button" onclick="testWhile()">Ecrire une chaîne</button>
+    </form>
+</body>
+</html>
