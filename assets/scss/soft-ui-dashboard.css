@@ -18290,7 +18290,7 @@ textarea.form-control-lg {
 
 */
 .alert-primary {
-  background-image: linear-gradient(310deg, #14b8a6 0%, #2d22e0 100%);
+  background-image: linear-gradient(310deg, #14b8a6 0%, #5a69f6 100%);
 }
 
 .alert-secondary {
@@ -19005,7 +19005,7 @@ textarea.form-control-lg {
   background: rgba(0, 0, 0, 0.2);
 }
 .card.card-background.card-background-mask-primary:after {
-  background-image: linear-gradient(310deg, #14b8a6 0%, #4f46e5 100%);
+  background-image: linear-gradient(310deg, #14b8a6 0%, #818cf8 100%);
   opacity: 0.85;
 }
 .card.card-background.card-background-mask-secondary:before {
@@ -19622,7 +19622,7 @@ label,
 }
 
 .bg-gradient-primary {
-  background-image: linear-gradient(310deg, #14b8a6 0%, #4f46e5 100%);
+  background-image: linear-gradient(310deg, #14b8a6 0%, #818cf8 100%);
 }
 
 .bg-gradient-secondary {
@@ -19835,7 +19835,7 @@ svg.text-primary .color-foreground {
   fill: #14b8a6;
 }
 svg.text-primary .color-background {
-  fill: #4f46e5;
+  fill: #818cf8;
 }
 
 svg.text-secondary .color-foreground {
@@ -19919,7 +19919,7 @@ svg.text-dark .color-background {
   backdrop-filter: saturate(200%) blur(30px);
 }
 .blur-section.blur-gradient-primary {
-  background-image: linear-gradient(310deg, rgba(20, 184, 166, 0.95) 0%, rgba(79, 70, 229, 0.95) 100%);
+  background-image: linear-gradient(310deg, rgba(20, 184, 166, 0.95) 0%, rgba(129, 140, 248, 0.95) 100%);
 }
 
 *.move-on-hover {
@@ -21373,7 +21373,7 @@ html {
 }
 
 .pagination.pagination-primary .page-item.active > .page-link, .pagination.pagination-primary .page-item.active > .page-link:focus, .pagination.pagination-primary .page-item.active > .page-link:hover {
-  background-image: linear-gradient(310deg, #14b8a6 0%, #4f46e5 100%);
+  background-image: linear-gradient(310deg, #14b8a6 0%, #818cf8 100%);
   border: none;
   color: #fff;
 }
