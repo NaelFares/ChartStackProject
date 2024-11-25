@@ -70,6 +70,25 @@ function fetchData(continent = null, country = null) {
     return null;
 }
 
+// Test 1 : Récupérer toutes les données et afficher la moyenne des revenus par niveau d'étude
+fetchData().then(data => {
+    console.log("Moyenne des revenus par niveau d'étude (toutes les données) :");
+    console.table(data);
+});
+
+// Test 2 : Récupérer les données pour un continent (Europe) et afficher la moyenne des revenus par niveau d'étude
+fetchData("Europe").then(data => {
+    console.log("Moyenne des revenus par niveau d'étude (Europe) :");
+    console.table(data);
+});
+
+// Test 3 : Récupérer les données pour un pays (France en Europe) et afficher la moyenne des revenus par niveau d'étude
+fetchData("Europe", "France").then(data => {
+    console.log("Moyenne des revenus par niveau d'étude (France) :");
+    console.table(data);
+});
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function treatData(pays, continent) {
@@ -104,42 +123,42 @@ function treatData(pays, continent) {
     return [edLevelList, sortedRevenus];
 }
 
-// Test sur la fonction treatData
-let continent = "Europe"; // Exemple de continent, peut être "Amérique" ou "Europe"
-let pays = "France"; // Exemple de pays, peut être "France", "Allemagne", etc.
+// // Test sur la fonction treatData
+// let continent = "Europe"; // Exemple de continent, peut être "Amérique" ou "Europe"
+// let pays = "France"; // Exemple de pays, peut être "France", "Allemagne", etc.
 
-// Obtenir l'URL du fichier JSON en fonction du continent
-let urlFile = getUrlByContinent(continent);
+// // Obtenir l'URL du fichier JSON en fonction du continent
+// let urlFile = getUrlByContinent(continent);
 
-if (urlFile) {
-    // Faire une requête AJAX pour récupérer les données du fichier JSON
-    let request = $.ajax({
-        type: "GET",
-        url: urlFile
-    });
+// if (urlFile) {
+//     // Faire une requête AJAX pour récupérer les données du fichier JSON
+//     let request = $.ajax({
+//         type: "GET",
+//         url: urlFile
+//     });
 
-    request.done(function(output) {
-        // Utiliser la fonction getDataByCountry pour obtenir les données spécifiques du pays
-        let dataCountry = getDataByCountry(pays, output);
+//     request.done(function(output) {
+//         // Utiliser la fonction getDataByCountry pour obtenir les données spécifiques du pays
+//         let dataCountry = getDataByCountry(pays, output);
         
-        // Appliquer la fonction treatData pour calculer les revenus moyens par niveau d'études
-        let [edLevelList, sortedRevenus] = treatData(pays, continent);
+//         // Appliquer la fonction treatData pour calculer les revenus moyens par niveau d'études
+//         let [edLevelList, sortedRevenus] = treatData(pays, continent);
         
-        // Afficher les données reçues pour le pays et les résultats du traitement
-        console.log('Données pour le pays:', pays);
-        console.log('Niveaux d\'études:', edLevelList);
-        console.log('Revenus moyens:', sortedRevenus);
+//         // Afficher les données reçues pour le pays et les résultats du traitement
+//         console.log('Données pour le pays:', pays);
+//         console.log('Niveaux d\'études:', edLevelList);
+//         console.log('Revenus moyens:', sortedRevenus);
 
-        // Optionnel : Tu peux aussi afficher ces résultats sur une chart ou un autre composant visuel
-    });
+//         // Optionnel : Tu peux aussi afficher ces résultats sur une chart ou un autre composant visuel
+//     });
 
-    request.fail(function(http_error) {
-        let server_msg = http_error.responseText;
-        let code = http_error.status;
-        let code_label = http_error.statusText;
-        console.error(`Erreur ${code} (${code_label}): ${server_msg}`);
-    });
-} else {
-    console.error("Aucune requête AJAX n'a été effectuée.");
-}
+//     request.fail(function(http_error) {
+//         let server_msg = http_error.responseText;
+//         let code = http_error.status;
+//         let code_label = http_error.statusText;
+//         console.error(`Erreur ${code} (${code_label}): ${server_msg}`);
+//     });
+// } else {
+//     console.error("Aucune requête AJAX n'a été effectuée.");
+// }
 
