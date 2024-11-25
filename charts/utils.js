@@ -262,6 +262,99 @@ function calculerListeRevenusMoyens(donnees, critere = "YearsCodePro") {
 }
 
 
+function updateCountry(chart, country, jsonData) {
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    let tabData = treatData(country,jsonData);
+    let years = tabData[0];
+    let values = tabData[1];
+
+    chart.data.labels = years;
+    
+    chart.data.datasets = [
+        {
+            label: "Nombre de médailles gagnées par année : " + country,
+            data: values,
+        }
+    ];
+    
+    chart.update();
+}
+
+
+function updateContinent(chart, country, jsonData) {
+
+    let tabData = treatData(country,jsonData);
+    let years = tabData[0];
+    let values = tabData[1];
+
+    chart.data.labels = years;
+    
+    chart.data.datasets = [
+        {
+            label: "Nombre de médailles gagnées par année : " + country,
+            data: values,
+        }
+    ];
+    
+    chart.update();
+}
+
+function createCountriesDropDown(chart, jsonData){
+   
+    // Créer l'élément <select>
+    var selectElement = document.createElement("select");
+
+    let countries = getCountries(jsonData);
+    countries.sort();
+
+    selectElement.appendChild("Tous les pays");
+
+    for(let i = 0; i < countries.length; i ++) {
+        let option = document.createElement('option');
+        option.value = countries[i];
+        option.text = countries[i];
+        // On ajoute l'option au dropDown
+        selectElement.appendChild(option);
+    }
+
+    // Associer le <select> à la div avec l'ID "myDiv"
+    document.getElementById("selectDiv").appendChild(selectElement);
+
+    // Associer l'événement change au <select>
+    selectElement.addEventListener('change', function() {
+        // Récupérer la valeur sélectionnée (le pays)
+        var selectedCountry = this.value;
+
+        // Appeler updateCountry avec la valeur sélectionnée
+        updateCountry(chart, selectedCountry, jsonData);
+    });
+}
+
+function createContientDropDown(chart, jsonData){
+   
+    // Créer l'élément <select>
+    var selectElement = document.createElement("select");
+
+    let continents = ["Amérique", "Europe"];
+
+    for(let i = 0; i < continents.length; i ++) {
+        let option = document.createElement('option');
+        option.value = continents[i];
+        option.text = continents[i];
+        // On ajoute l'option au dropDown
+        selectElement.appendChild(option);
+    }
+
+    // Associer le <select> à la div avec l'ID "myDiv"
+    document.getElementById("selectDiv").appendChild(selectElement);
+
+    // Associer l'événement change au <select>
+    selectElement.addEventListener('change', function() {
+        // Récupérer la valeur sélectionnée (le pays)
+        var selectedContinent = this.value;
+
+        // Appeler updateCountry avec la valeur sélectionnée
+        updateContinent(chart, selectedContinent, jsonData);
+    });
+}
 
