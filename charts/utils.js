@@ -263,6 +263,22 @@ function calculerListeRevenusMoyens(donnees, critere = "YearsCodePro") {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+function getCountries(jsonData) {
+
+    let countryValues = [];
+
+    // Parcourir toutes les données avec une boucle for
+    for (let i = 0; i < jsonData.length; i++) {
+        let e = jsonData[i];
+
+        // Boucle pour éviter les doublons, ou bien utiliser un Set
+        if(!countryValues.includes(e.Country)){
+            countryValues.push(e.Country);
+        }
+    }
+
+    return countryValues; 
+}
 
 function updateCountry(chart, country, jsonData) {
 
@@ -301,61 +317,78 @@ function updateContinent(chart, country, jsonData) {
     chart.update();
 }
 
-function createCountriesDropDown(chart, jsonData){
-   
-    // Créer l'élément <select>
-    var selectElement = document.createElement("select");
 
+function addCountriesToDropDown(selectId, chart, jsonData) {
+    // Récupérer le <select> existant via son ID
+    var selectElement = document.getElementById(selectId);
+    if (!selectElement) {
+        console.error(`Aucun élément <select> trouvé avec l'ID : ${selectId}`);
+        return;
+    }
+
+    // Effacer les options actuelles 
+    selectElement.innerHTML = '';
+
+    // Ajouter l'option "Tous les pays"
+    let allCountriesOption = document.createElement('option');
+    allCountriesOption.value = "Tous";
+    allCountriesOption.text = "Tous les pays";
+    allCountriesOption.style.color = "black";
+    allCountriesOption.style.backgroundColor = "white"; // Applique le style donné
+    selectElement.appendChild(allCountriesOption);
+
+    // Récupérer la liste des pays et les trier
     let countries = getCountries(jsonData);
     countries.sort();
 
-    selectElement.appendChild("Tous les pays");
-
-    for(let i = 0; i < countries.length; i ++) {
+    // Ajouter chaque pays au <select> avec les styles donnés
+    for (let i = 0; i < countries.length; i++) {
         let option = document.createElement('option');
         option.value = countries[i];
         option.text = countries[i];
-        // On ajoute l'option au dropDown
+        option.style.color = "black"; // Applique le style donné
+        option.style.backgroundColor = "white"; // Applique le style donné
         selectElement.appendChild(option);
     }
 
-    // Associer le <select> à la div avec l'ID "myDiv"
-    document.getElementById("selectDiv").appendChild(selectElement);
-
-    // Associer l'événement change au <select>
+    // Associer un événement 'change' au <select>
     selectElement.addEventListener('change', function() {
-        // Récupérer la valeur sélectionnée (le pays)
+        // Récupérer la valeur sélectionnée
         var selectedCountry = this.value;
 
-        // Appeler updateCountry avec la valeur sélectionnée
+        // Appeler la fonction updateCountry avec la sélection
         updateCountry(chart, selectedCountry, jsonData);
     });
 }
 
-function createContientDropDown(chart, jsonData){
-   
-    // Créer l'élément <select>
-    var selectElement = document.createElement("select");
 
-    let continents = ["Amérique", "Europe"];
+// Test sur les deux fonctions
+let continent = "Europe"; // Par exemple, "Amérique" ou "Europe"
+let file = getUrlByContinent(continent); // Obtenir le chemin du fichier JSON
 
-    for(let i = 0; i < continents.length; i ++) {
-        let option = document.createElement('option');
-        option.value = continents[i];
-        option.text = continents[i];
-        // On ajoute l'option au dropDown
-        selectElement.appendChild(option);
-    }
-
-    // Associer le <select> à la div avec l'ID "myDiv"
-    document.getElementById("selectDiv").appendChild(selectElement);
-
-    // Associer l'événement change au <select>
-    selectElement.addEventListener('change', function() {
-        // Récupérer la valeur sélectionnée (le pays)
-        var selectedContinent = this.value;
-
-        // Appeler updateCountry avec la valeur sélectionnée
-        updateContinent(chart, selectedContinent, jsonData);
+if (file) {
+    // Faire une requête AJAX pour récupérer les données du fichier JSON
+    let request = $.ajax({
+        type: "GET",
+        url: file
     });
+
+    request.done(function(output) {
+        // Afficher les données reçues pour le continent sélectionné
+        console.log("Arrivée");
+        addCountriesToDropDown("selectPaysEfExperience",output) 
+
+        
+        // Ici, tu peux appeler d'autres fonctions pour traiter ces données
+    });
+
+    request.fail(function(http_error) {
+        let server_msg = http_error.responseText;
+        let code = http_error.status;
+        let code_label = http_error.statusText;
+        console.error(`Erreur ${code} (${code_label}): ${server_msg}`);
+    });
+} else {
+    console.error("Aucune requête AJAX n'a été effectuée.");
 }
+

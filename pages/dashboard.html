@@ -21,21 +21,21 @@
   <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
   <link rel="icon" type="image/png" href="../assets/img/favicon.png">
   <title>
-    Soft UI Dashboard 3 by Creative Tim
+    Chart Project R5.C.04
   </title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,800" rel="stylesheet" />
   <!-- Nucleo Icons -->
   <link href="https://demos.creative-tim.com/soft-ui-dashboard/assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="https://demos.creative-tim.com/soft-ui-dashboard/assets/css/nucleo-svg.css" rel="stylesheet" />
-  <!-- Font Awesome Icons -->
-  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+
   <!-- CSS Files -->
   <link id="pagestyle" href="../assets/css/soft-ui-dashboard.css?v=1.1.0" rel="stylesheet" />
-  <!-- Nepcha Analytics (nepcha.com) -->
-  <!-- Nepcha is a easy-to-use web analytics. No cookies and fully compliant with GDPR, CCPA and PECR. -->
-  <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
-  <link href="../assets/css/style.css" rel="stylesheet" />
+
+
+  <script src=https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"> </script>
+  <script src="../charts/utils.js"></script>
 </head>
 
 <body class="g-sidenav-show  bg-gray-100">
@@ -166,21 +166,19 @@
                 <canvas id="chart-line-1" class="chart-canvas" height="300"></canvas>
               </div>
               <!-- Conteneur des selects -->
-              <div class="d-flex justify-content-between">
+              <div class="d-flex justify-content">
                 <div class="form-group me-2">
                   <label for="select1" class="form-label">Continent</label>
-                  <select class="form-select bg-primary text-white" id="select1" style="width: auto; min-width: 150px;">
-                    <option value="1" style="color: black; background-color: white;">Option courte</option>
-                    <option value="2" style="color: black; background-color: white;">Option un peu plus longue</option>
-                    <option value="3" style="color: black; background-color: white;">Option très longue qui s'adapte</option>
+                  <select class="form-select bg-primary text-white" id="selectContinentEfExperience" style="width: auto; min-width: 150px;">
+                    <option value="Tous" style="color: black; background-color: white;">Tous</option>
+                    <option value="Amérique" style="color: black; background-color: white;">Amérique</option>
+                    <option value="Europe" style="color: black; background-color: white;">Europe</option>
                   </select>
                 </div>
                 <div class="form-group">
                   <label for="select2" class="form-label">Pays</label>
-                  <select class="form-select bg-primary text-white" id="select2" style="width: auto; min-width: 150px;">
-                    <option value="1" style="color: black; background-color: white;">Option 1</option>
-                    <option value="2" style="color: black; background-color: white;">Option 2</option>
-                    <option value="3" style="color: black; background-color: white;">Option 3</option>
+                  <select class="form-select bg-primary text-white" id="selectPaysEfExperience" style="width: auto; min-width: 150px;">
+                    <option value="1" style="color: black; background-color: white;"></option>
                   </select>
                 </div>
               </div>
@@ -199,13 +197,13 @@
                 <canvas id="chart-line-2" class="chart-canvas" height="300"></canvas>
               </div>
               <!-- Conteneur des selects -->
-              <div class="d-flex justify-content-between">
+              <div class="d-flex justify-content">
                 <div class="form-group me-2">
-                  <label for="select3" class="form-label">Année</label>
-                  <select class="form-select bg-primary text-white" id="select3" style="width: auto; min-width: 150px;">
-                    <option value="1" style="color: black; background-color: white;">2021</option>
-                    <option value="2" style="color: black; background-color: white;">2022</option>
-                    <option value="3" style="color: black; background-color: white;">2023</option>
+                  <label for="select1" class="form-label">Continent</label>
+                  <select class="form-select bg-primary text-white" id="selectContinentEfEtudes" style="width: auto; min-width: 150px;">
+                    <option value="Tous" style="color: black; background-color: white;">Tous</option>
+                    <option value="Amérique" style="color: black; background-color: white;">Amérique</option>
+                    <option value="Europe" style="color: black; background-color: white;">Europe</option>
                   </select>
                 </div>
                 <div class="form-group">
@@ -824,8 +822,7 @@
       Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
     }
   </script>
-  <!-- Github buttons -->
-  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../assets/js/soft-ui-dashboard.min.js?v=1.1.0"></script>
 </body>
