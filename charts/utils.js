@@ -224,6 +224,7 @@ function getDataByCountry(country, jsonFiles) {
 //     console.error("Aucune requête AJAX n'a été effectuée.");
 // }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Calculer le revenu moyen selon un critère
 function calculerListeRevenusMoyens(donnees, critere = "YearsCodePro") {
@@ -259,3 +260,5 @@ function calculerListeRevenusMoyens(donnees, critere = "YearsCodePro") {
     // Retourner la liste triée par le critère
     return listeRevenusMoyens.sort((a, b) => a.critere - b.critere);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
