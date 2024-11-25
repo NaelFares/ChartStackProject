@@ -223,3 +223,39 @@ function getDataByCountry(country, jsonFiles) {
 // } else {
 //     console.error("Aucune requête AJAX n'a été effectuée.");
 // }
+
+
+//Calculer le revenu moyen selon un critère
+function calculerListeRevenusMoyens(donnees, critere = "YearsCodePro") {
+    const revenusParCritere = {};
+
+    donnees.forEach(item => {
+        const revenu = parseFloat(item.CompTotal || 0); // Revenu brut
+        const devise = item.Currency; // Devise
+        const valeurCritere = item[critere]; // Valeur du critère
+
+        // Vérifie que le revenu, la devise et le critère sont valides avant la conversion
+        if (!isNaN(revenu) && devise && valeurCritere) {
+            const revenuEnEuros = convertirEnEuros(revenu, devise);
+            if (revenuEnEuros !== null && revenuEnEuros !== undefined) {
+                if (!revenusParCritere[valeurCritere]) {
+                    revenusParCritere[valeurCritere] = { total: 0, count: 0 };
+                }
+                revenusParCritere[valeurCritere].total += revenuEnEuros;
+                revenusParCritere[valeurCritere].count++;
+            }
+        }
+    });
+
+    // Calculer les revenus moyens pour chaque critère
+    const listeRevenusMoyens = Object.keys(revenusParCritere).map(cle => {
+        const { total, count } = revenusParCritere[cle];
+        return {
+            critere: cle,
+            revenuMoyen: (total / count).toFixed(2)
+        };
+    });
+
+    // Retourner la liste triée par le critère
+    return listeRevenusMoyens.sort((a, b) => a.critere - b.critere);
+}
