@@ -186,7 +186,7 @@ function convertToEuros(value, currencyCode) {
     
     // Afficher le résultat
     //console.log(`Le montant de ${value} ${currencyCode} est égal à ${valueConvertie.toFixed(2)} EUR`);
-    return valueConvertie.toFixed(2);
+    return valueConvertie;
 }
 
 // Exemple d'utilisation
@@ -369,23 +369,33 @@ function getDataByCountry(country, jsonFiles) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//Calculer le revenu moyen selon un critère
+// Calculer le revenu moyen selon un critère, avec exclusion des valeurs extrêmes
 function calculerListeRevenusMoyens(jsonData, critere) {
     const revenusParCritere = {};
 
+    // Définir les seuils pour exclure les outliers
+    const revenuMin = 1000; // Par exemple : revenu minimum raisonnable
+    const revenuMax = 500000; // Par exemple : revenu maximum raisonnable
+
     jsonData.forEach(item => {
-        const revenu = parseFloat(item.CompTotal || 0); // Revenu brut
+        const revenu = parseFloat(item.CompTotal || 0); // Revenu 
         const devise = item.Currency; // Devise
         const valeurCritere = item[critere]; // Valeur du critère
 
         if (!isNaN(revenu) && devise && valeurCritere) {
             const revenuEnEuros = convertToEuros(revenu, devise);
-            if (revenuEnEuros !== null && revenuEnEuros !== undefined) {
+
+            // Vérifier que le revenu converti est dans les limites acceptables
+            if (revenuEnEuros !== null && revenuEnEuros >= revenuMin && revenuEnEuros <= revenuMax) {
                 if (!revenusParCritere[valeurCritere]) {
                     revenusParCritere[valeurCritere] = { total: 0, count: 0 };
                 }
                 revenusParCritere[valeurCritere].total += revenuEnEuros;
                 revenusParCritere[valeurCritere].count++;
+            } else {
+                console.warn(
+                    `Revenu exclu (hors seuils) : ${revenuEnEuros} EUR pour le critère ${valeurCritere}`
+                );
             }
         }
     });
@@ -393,14 +403,17 @@ function calculerListeRevenusMoyens(jsonData, critere) {
     const criteres = [];
     const revenusMoyens = [];
 
-    Object.keys(revenusParCritere).sort().forEach(cle => {
-        const { total, count } = revenusParCritere[cle];
-        criteres.push(cle);
-        revenusMoyens.push((total / count).toFixed(2));
-    });
+    Object.keys(revenusParCritere)
+        .sort()
+        .forEach(cle => {
+            const { total, count } = revenusParCritere[cle];
+            criteres.push(cle);
+            revenusMoyens.push((total / count).toFixed(2)); // Calculer la moyenne
+        });
 
     return { criteres, revenusMoyens };
 }
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -493,14 +506,14 @@ function addCountriesToDropDown(selectId, chart, jsonData) {
         selectElement.appendChild(option);
     }
 
-    // Associer un événement 'change' au <select>
-    selectElement.addEventListener('change', function() {
-        // Récupérer la valeur sélectionnée
-        var selectedCountry = this.value;
+    // // Associer un événement 'change' au <select>
+    // selectElement.addEventListener('change', function() {
+    //     // Récupérer la valeur sélectionnée
+    //     var selectedCountry = this.value;
 
-        // Appeler la fonction updateCountry avec la sélection
-        updateCountry(chart, selectedCountry, jsonData);
-    });
+    //     // Appeler la fonction updateCountry avec la sélection
+    //     updateCountry(chart, selectedCountry, jsonData);
+    // });
 }
 
 
@@ -510,10 +523,9 @@ function loadChartRevenuMoyenEfExperience(jsonData) {
 
     const { criteres, revenusMoyens }  = calculerListeRevenusMoyens(jsonData, "YearsCodePro");
 
+    const chartRevenuMoyenEfExperience = document.getElementById('chartRevenuMoyenEfExperience');
 
-    const lineChartFrance = document.getElementById('chartRevenuMoyenEfExperience');
-
-    var chart = new Chart(lineChartFrance, {
+    var chart = new Chart(chartRevenuMoyenEfExperience, {
         type: 'line',
         data: {
         labels: criteres,
@@ -552,7 +564,7 @@ if (file) {
         // Afficher les données reçues pour le continent sélectionné
         console.log("Arrivée");
         loadChartRevenuMoyenEfExperience(output);
-        addCountriesToDropDown("selectPaysEfExperience",output) ;
+        // addCountriesToDropDown("selectPaysEfExperience",output) ;
        
 
         
