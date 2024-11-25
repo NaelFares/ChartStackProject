@@ -53,10 +53,77 @@ function convertToEuros(value, currencyCode) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Choisir quel fichier JSON utiliser
-function getDataByContinent(continent) {
-
+function getAll() {
+    //let combineData = ["../data/survey_results_NA.json", "../data/survey_results_WE.json"];
+    return concat("../data/survey_results_NA.json", "../data/survey_results_WE.json");
 }
+
+resultat = getAll()
+
+// Faire une requête AJAX pour récupérer les données du fichier JSON
+let request = $.ajax({
+    type: "GET",
+    url: resultat
+});
+
+request.done(function(output) {
+    // Afficher les données reçues pour le continent sélectionné
+    console.log('Données reçues pour les continents:');
+    console.log(output);
+    
+    // Ici, tu peux appeler d'autres fonctions pour traiter ces données
+});
+
+request.fail(function(http_error) {
+    let server_msg = http_error.responseText;
+    let code = http_error.status;
+    let code_label = http_error.statusText;
+    console.error(`Erreur ${code} (${code_label}): ${server_msg}`);
+});
+
+
+
+// Choisir quel fichier JSON utiliser
+function getUrlByContinent(continent) {
+    switch (continent) {
+        case "Amérique":
+            return "../data/survey_results_NA.json";
+        case "Europe":
+            return "../data/survey_results_WE.json";
+        default:
+            console.error("Continent invalide. Veuillez choisir 'Amérique' ou 'Europe'.");
+            return null;
+    }
+}
+
+// // Définir le continent choisi
+// let continent = "Europe"; // Par exemple, "Amérique" ou "Europe"
+// let file = getUrlByContinent(continent); // Obtenir le chemin du fichier JSON
+
+// if (file) {
+//     // Faire une requête AJAX pour récupérer les données du fichier JSON
+//     let request = $.ajax({
+//         type: "GET",
+//         url: file
+//     });
+
+//     request.done(function(output) {
+//         // Afficher les données reçues pour le continent sélectionné
+//         console.log('Données reçues pour le continent:');
+//         console.log(output);
+        
+//         // Ici, tu peux appeler d'autres fonctions pour traiter ces données
+//     });
+
+//     request.fail(function(http_error) {
+//         let server_msg = http_error.responseText;
+//         let code = http_error.status;
+//         let code_label = http_error.statusText;
+//         console.error(`Erreur ${code} (${code_label}): ${server_msg}`);
+//     });
+// } else {
+//     console.error("Aucune requête AJAX n'a été effectuée.");
+// }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -86,27 +153,30 @@ function getDataByCountry(country, jsonFiles) {
     return result;  // Retourner le tableau avec un objet par pays, contenant tous ses documents
 }
 
+// // Tester la fonction avec une requête AJAX
+// let request = $.ajax({
+//     type: "GET",
+//     url: "../data/survey_results_NA.json"
+// });
 
-// Tester la fonction avec une requête AJAX
-let request = $.ajax({
-    type: "GET",
-    url: "../data/survey_results_NA.json"
-});
+// request.done(function(output) {
+//     // Utiliser la fonction pour récupérer les données de la France
+//     let data = getDataByCountry("United States of America", output);
+//     let data2 = getDataByCountry("Canada", output);
 
-request.done(function(output) {
-    // Utiliser la fonction pour récupérer les données de la France
-    let data = getDataByCountry("United States of America", output);
-    let data2 = getDataByCountry("Canada", output);
+//     // Afficher les 3 premiers éléments
+//     console.log(data);
+//     console.log(data2);
 
-    // Afficher les 3 premiers éléments
-    console.log(data);
-    console.log(data2);
+// });
 
-});
+// request.fail(function(http_error) {
+//     let server_msg = http_error.responseText;
+//     let code = http_error.status;
+//     let code_label = http_error.statusText;
+//     alert("Erreur " + code + " (" + code_label + ") : " + server_msg);
+// });
 
-request.fail(function(http_error) {
-    let server_msg = http_error.responseText;
-    let code = http_error.status;
-    let code_label = http_error.statusText;
-    alert("Erreur " + code + " (" + code_label + ") : " + server_msg);
-});
+
+// file = getUrlByContinent(continent)
+// getDataByCountry(pays, file)
