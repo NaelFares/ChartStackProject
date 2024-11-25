@@ -227,15 +227,14 @@ function getDataByCountry(country, jsonFiles) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Calculer le revenu moyen selon un critère
-function calculerListeRevenusMoyens(donnees, critere = "YearsCodePro") {
+function calculerListeRevenusMoyens(jsonData, critere) {
     const revenusParCritere = {};
 
-    donnees.forEach(item => {
+    jsonData.forEach(item => {
         const revenu = parseFloat(item.CompTotal || 0); // Revenu brut
         const devise = item.Currency; // Devise
         const valeurCritere = item[critere]; // Valeur du critère
 
-        // Vérifie que le revenu, la devise et le critère sont valides avant la conversion
         if (!isNaN(revenu) && devise && valeurCritere) {
             const revenuEnEuros = convertToEuros(revenu, devise);
             if (revenuEnEuros !== null && revenuEnEuros !== undefined) {
@@ -248,17 +247,16 @@ function calculerListeRevenusMoyens(donnees, critere = "YearsCodePro") {
         }
     });
 
-    // Calculer les revenus moyens pour chaque critère
-    const listeRevenusMoyens = Object.keys(revenusParCritere).map(cle => {
+    const criteres = [];
+    const revenusMoyens = [];
+
+    Object.keys(revenusParCritere).sort().forEach(cle => {
         const { total, count } = revenusParCritere[cle];
-        return {
-            critere: cle,
-            revenuMoyen: (total / count).toFixed(2)
-        };
+        criteres.push(cle);
+        revenusMoyens.push((total / count).toFixed(2));
     });
 
-    // Retourner la liste triée par le critère
-    return listeRevenusMoyens.sort((a, b) => a.critere - b.critere);
+    return { criteres, revenusMoyens };
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -363,6 +361,38 @@ function addCountriesToDropDown(selectId, chart, jsonData) {
 }
 
 
+
+
+function loadChartRevenuMoyenEfExperience(jsonData) {
+
+    const { criteres, revenusMoyens }  = calculerListeRevenusMoyens(jsonData, "YearsCodePro");
+
+
+    const lineChartFrance = document.getElementById('chartRevenuMoyenEfExperience');
+
+    var chart = new Chart(lineChartFrance, {
+        type: 'line',
+        data: {
+        labels: criteres,
+        datasets: [{
+            label: 'Revenus moyens',
+            data: revenusMoyens,
+            borderWidth: 1
+        }]
+        },
+        options: {
+        scales: {
+            y: {
+            beginAtZero: true
+            }
+        }
+        }
+    });
+
+    return chart;
+}
+
+
 // Test sur les deux fonctions
 let continent = "Europe"; // Par exemple, "Amérique" ou "Europe"
 let file = getUrlByContinent(continent); // Obtenir le chemin du fichier JSON
@@ -378,7 +408,9 @@ if (file) {
     request.done(function(output) {
         // Afficher les données reçues pour le continent sélectionné
         console.log("Arrivée");
-        addCountriesToDropDown("selectPaysEfExperience",output) 
+        loadChartRevenuMoyenEfExperience(output);
+        addCountriesToDropDown("selectPaysEfExperience",output) ;
+       
 
         
         // Ici, tu peux appeler d'autres fonctions pour traiter ces données
