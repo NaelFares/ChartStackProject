@@ -1,72 +1,76 @@
-// // Fonction pour gérer le processus complet de sélection et affichage des données
-// function handleSelection(continent, pays) {
-//     let urlFile;
 
-//     // Si aucun continent n'est sélectionné, on affiche toutes les données
-//     if (!continent) {
-//         let { request1, request2 } = getAll();
-        
-//         // Attendre la fin des deux requêtes AJAX pour récupérer toutes les données
-//         $.when(request1, request2).done(function(output1, output2) {
-//             let combinedData = output1[0].concat(output2[0]);
-//             console.log('Toutes les données sur les deux continents :', combinedData);
-//             console.log(calculerListeRevenusMoyens(combinedData, "EdLevel"));
-//         }).fail(function(http_error) {
-//             let server_msg = http_error.responseText;
-//             let code = http_error.status;
-//             let code_label = http_error.statusText;
-//             console.error(`Erreur ${code} (${code_label}): ${server_msg}`);
-//         });
-//     }
-//     // Si un continent est sélectionné, on affiche les données de ce continent
-//     else {
-//         urlFile = getUrlByContinent(continent);
+function fetchData(continent = null, country = null) {
+    // Si aucun continent et aucun pays n'est précisé : récupérer toutes les données
+    if (!continent && !country) {
+        let { request1, request2 } = getAll();
 
-//         if (urlFile) {
-//             // Effectuer la requête AJAX pour récupérer les données du continent
-//             let request = $.ajax({
-//                 type: "GET",
-//                 url: urlFile
-//             });
+        return $.when(request1, request2).then(
+            (data1, data2) => {
+                // Concaténer les données des deux fichiers
+                const allData = data1[0].concat(data2[0]);
+                // Calculer les moyennes par niveau d'étude
+                return calculerListeRevenusMoyens(allData, "EdLevel");
+            },
+            (http_error) => {
+                console.error(`Erreur lors de la récupération des données globales : ${http_error.statusText}`);
+            }
+        );
+    }
 
-//             request.done(function(output) {
-//                 // Si un pays est également sélectionné, on filtre les données pour ce pays
-//                 if (pays) {
-//                     let countryData = getDataByCountry(pays, output);
-//                     console.log(`Données pour ${pays}:`, countryData);
-//                     console.log(calculerListeRevenusMoyens(countryData, "EdLevel"));
-//                 } else {
-//                     // Sinon, on affiche toutes les données du continent
-//                     console.log(`Toutes les données pour le continent ${continent}:`, output);
-//                     console.log(calculerListeRevenusMoyens(output, "EdLevel"));
-//                 }
-//             });
+    // Si un continent est précisé, mais pas de pays
+    if (continent && !country) {
+        const url = getUrlByContinent(continent);
 
-//             request.fail(function(http_error) {
-//                 let server_msg = http_error.responseText;
-//                 let code = http_error.status;
-//                 let code_label = http_error.statusText;
-//                 console.error(`Erreur ${code} (${code_label}): ${server_msg}`);
-//             });
-//         }
-//     }
-// }
+        if (url) {
+            return $.ajax({
+                type: "GET",
+                url: url,
+            }).then(
+                (data) => {
+                    // Calculer les moyennes par niveau d'étude pour le continent
+                    return calculerListeRevenusMoyens(data, "EdLevel");
+                },
+                (http_error) => {
+                    console.error(`Erreur lors de la récupération des données pour le continent : ${http_error.statusText}`);
+                }
+            );
+        } else {
+            console.error("URL invalide pour le continent spécifié.");
+            return null;
+        }
+    }
 
-// // Exemple d'appel avec un continent et un pays
-// let continent = "Europe"; // Continent sélectionné
-// let pays = "France"; // Pays sélectionné
-// handleSelection(continent, pays); // Appeler la fonction avec les paramètres choisis
+    // Si un continent et un pays sont précisés
+    if (continent && country) {
+        const url = getUrlByContinent(continent);
 
-// // Exemple d'appel avec seulement un continent
-// continent = "Amérique"; // Continent sélectionné
-// pays = ""; // Aucun pays sélectionné
-// handleSelection(continent, pays); // Appeler la fonction avec seulement le continent
+        if (url) {
+            return $.ajax({
+                type: "GET",
+                url: url,
+            }).then(
+                (data) => {
+                    // Filtrer les données pour le pays
+                    const countryData = getDataByCountry(country, data);
+                    // Calculer les moyennes par niveau d'étude pour le pays
+                    return calculerListeRevenusMoyens(countryData, "EdLevel");
+                },
+                (http_error) => {
+                    console.error(`Erreur lors de la récupération des données pour le pays : ${http_error.statusText}`);
+                }
+            );
+        } else {
+            console.error("URL invalide pour le continent spécifié.");
+            return null;
+        }
+    }
 
-// // Exemple d'appel avec tous les continents
-// continent = ""; // Aucun continent sélectionné
-// pays = ""; // Aucun pays sélectionné
-// handleSelection(continent, pays); // Appeler la fonction pour afficher toutes les données
+    // Si une configuration incorrecte est fournie
+    console.error("Configuration invalide. Fournissez un continent et/ou un pays valide.");
+    return null;
+}
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function treatData(pays, continent) {
     // Récupérer l'URL du fichier JSON en fonction du continent
