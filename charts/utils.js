@@ -27,6 +27,149 @@ function convertToEuros(value, currencyCode) {
         case "NA":
             taux = null;
             break;
+
+
+        case "AED United Arab Emirates dirham":
+            taux = 1; 
+            break;
+        case "AFN\tAfghan afghani":
+            taux = 1; 
+            break;
+        case "ALL\tAlbanian lek":
+            taux = 1; 
+            break;
+        case "AMD\tArmenian dram":
+            taux = 1; 
+            break;
+        case "ANG Netherlands Antillean guilder":
+            taux = 1; 
+            break;
+        case "ARS\tArgentine peso":
+            taux = 1; 
+            break;
+        case "AUD\tAustralian dollar":
+            taux = 1; 
+            break;
+        case "AWG\tAruban florin":
+            taux = 1; 
+            break;
+        case "AZN\tAzerbaijan manat":
+            taux = 1; 
+            break;
+        case "BAM\tBosnia and Herzegovina convertible mark":
+            taux = 1; 
+            break;
+        case "BGN\tBulgarian lev":
+            taux = 1; 
+            break;
+        case "BIF\tBurundi franc":
+            taux = 1; 
+            break;
+        case "BOB\tBolivian boliviano":
+            taux = 1; 
+            break;
+        case "BRL\tBrazilian real":
+            taux = 1; 
+            break;
+        case "CDF\tCongolese franc":
+            taux = 1; 
+            break;
+        case "CLP\tChilean peso":
+            taux = 1; 
+            break;
+        case "CNY\tChinese Yuan Renminbi":
+            taux = 1; 
+            break;
+        case "COP\tColombian peso":
+            taux = 1; 
+            break;
+        case "CRC\tCosta Rican colon":
+            taux = 1; 
+            break;
+        case "CUP\tCuban peso":
+            taux = 1; 
+            break;
+        case "DJF\tDjiboutian franc":
+            taux = 1; 
+            break;
+        case "FJD\tFijian dollar":
+            taux = 1; 
+            break;
+        case "FKP\tFalkland Islands pound":
+            taux = 1; 
+            break;
+        case "GHS\tGhanaian cedi":
+            taux = 1; 
+            break;
+        case "GIP\tGibraltar pound":
+            taux = 1; 
+            break;
+        case "HKD\tHong Kong dollar":
+            taux = 1; 
+            break;
+        case "HUF\tHungarian forint":
+            taux = 1; 
+            break;
+        case "IDR\tIndonesian rupiah":
+            taux = 1; 
+            break;
+        case "ILS\tIsraeli new shekel":
+            taux = 1; 
+            break;
+        case "IRR\tIranian rial":
+            taux = 1; 
+            break;
+        case "JPY\tJapanese yen":
+            taux = 1; 
+            break;
+        case "LAK\tLao kip":
+            taux = 1; 
+            break;
+        case "MYR\tMalaysian ringgit":
+            taux = 1; 
+            break;
+        case "NOK\tNorwegian krone":
+            taux = 1; 
+            break;
+        case "PEN\tPeruvian sol":
+            taux = 1; 
+            break;
+        case "QAR\tQatari riyal":
+            taux = 1; 
+            break;
+        case "SAR\tSaudi Arabian riyal":
+            taux = 1; 
+            break;
+        case "SLL\tSierra Leonean leone":
+            taux = 1; 
+            break;
+        case "THB\tThai baht":
+            taux = 1; 
+            break;
+        case "TWD\tNew Taiwan dollar":
+            taux = 1; 
+            break;
+        case "UAH\tUkrainian hryvnia":
+            taux = 1; 
+            break;
+        case "UGX\tUgandan shilling":
+            taux = 1; 
+            break;
+        case "UZS\tUzbekistani som":
+            taux = 1; 
+            break;
+        case "XPF\tCFP franc":
+            taux = 1; 
+            break;
+        case "YER\tYemeni rial":
+            taux = 1; 
+            break;
+        case "ZAR\tSouth African rand":
+            taux = 1; 
+            break;
+        case "ZMW Zambian kwacha":
+            taux = 1; 
+            break;
         default:
             console.error("Devise inconnue ou non supportée");
             return; // Si la devise n'est pas supportée
