@@ -42,7 +42,7 @@ function convertToEuros(value, currencyCode) {
     const valueConvertie = value * taux;
     
     // Afficher le résultat
-    console.log(`Le montant de ${value} ${currencyCode} est égal à ${valueConvertie.toFixed(2)} EUR`);
+    //console.log(`Le montant de ${value} ${currencyCode} est égal à ${valueConvertie.toFixed(2)} EUR`);
     return valueConvertie.toFixed(2);
 }
 
@@ -237,7 +237,7 @@ function calculerListeRevenusMoyens(donnees, critere = "YearsCodePro") {
 
         // Vérifie que le revenu, la devise et le critère sont valides avant la conversion
         if (!isNaN(revenu) && devise && valeurCritere) {
-            const revenuEnEuros = convertirEnEuros(revenu, devise);
+            const revenuEnEuros = convertToEuros(revenu, devise);
             if (revenuEnEuros !== null && revenuEnEuros !== undefined) {
                 if (!revenusParCritere[valeurCritere]) {
                     revenusParCritere[valeurCritere] = { total: 0, count: 0 };
@@ -279,6 +279,7 @@ function getCountries(jsonData) {
 
     return countryValues; 
 }
+
 
 function updateCountry(chart, country, jsonData) {
 
@@ -373,6 +374,7 @@ if (file) {
         url: file
     });
 
+
     request.done(function(output) {
         // Afficher les données reçues pour le continent sélectionné
         console.log("Arrivée");
@@ -390,5 +392,6 @@ if (file) {
     });
 } else {
     console.error("Aucune requête AJAX n'a été effectuée.");
+
 }
 
