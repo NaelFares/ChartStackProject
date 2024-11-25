@@ -195,32 +195,31 @@ function getDataByCountry(country, jsonFiles) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Définir le continent choisi
-let continent = "Europe"; // Par exemple, "Amérique" ou "Europe"
-let file = getUrlByContinent(continent); // Obtenir le chemin du fichier JSON
+// // Test sur les deux fonctions
+// let continent = "Europe"; // Par exemple, "Amérique" ou "Europe"
+// let file = getUrlByContinent(continent); // Obtenir le chemin du fichier JSON
 
-if (file) {
-    // Faire une requête AJAX pour récupérer les données du fichier JSON
-    let request = $.ajax({
-        type: "GET",
-        url: file
-    });
+// if (file) {
+//     // Faire une requête AJAX pour récupérer les données du fichier JSON
+//     let request = $.ajax({
+//         type: "GET",
+//         url: file
+//     });
 
-    request.done(function(output) {
-        // Afficher les données reçues pour le continent sélectionné
-        console.log('Données reçues pour le pays:');
-        console.log()
-        console.log(output);
+//     request.done(function(output) {
+//         // Afficher les données reçues pour le continent sélectionné
+//         console.log('Données reçues pour le pays:');
+//         console.log(getDataByCountry("France", output));
         
-        // Ici, tu peux appeler d'autres fonctions pour traiter ces données
-    });
+//         // Ici, tu peux appeler d'autres fonctions pour traiter ces données
+//     });
 
-    request.fail(function(http_error) {
-        let server_msg = http_error.responseText;
-        let code = http_error.status;
-        let code_label = http_error.statusText;
-        console.error(`Erreur ${code} (${code_label}): ${server_msg}`);
-    });
-} else {
-    console.error("Aucune requête AJAX n'a été effectuée.");
-}
+//     request.fail(function(http_error) {
+//         let server_msg = http_error.responseText;
+//         let code = http_error.status;
+//         let code_label = http_error.statusText;
+//         console.error(`Erreur ${code} (${code_label}): ${server_msg}`);
+//     });
+// } else {
+//     console.error("Aucune requête AJAX n'a été effectuée.");
+// }
