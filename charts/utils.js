@@ -53,35 +53,46 @@ function convertToEuros(value, currencyCode) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// Fonction pour récupérer les deux fichiers JSON
 function getAll() {
-    //let combineData = ["../data/survey_results_NA.json", "../data/survey_results_WE.json"];
-    return concat("../data/survey_results_NA.json", "../data/survey_results_WE.json");
+    // Définir les chemins des fichiers
+    let file1 = "../data/survey_results_NA.json";
+    let file2 = "../data/survey_results_WE.json";
+
+    // Effectuer deux requêtes AJAX pour récupérer les fichiers
+    let request1 = $.ajax({
+        type: "GET",
+        url: file1
+    });
+
+    let request2 = $.ajax({
+        type: "GET",
+        url: file2
+    });
+
+    // Retourner un objet avec les deux requêtes
+    return { request1, request2 };
 }
 
-resultat = getAll()
+// // Lancer les requêtes
+// let { request1, request2 } = getAll();
 
-// Faire une requête AJAX pour récupérer les données du fichier JSON
-let request = $.ajax({
-    type: "GET",
-    url: resultat
-});
+// // Effectuer les deux requêtes AJAX
+// $.when(request1, request2).done(function(output1, output2) {
+//     // Concaténer les résultats des deux fichiers
+//     let combinedData = output1[0].concat(output2[0]);
 
-request.done(function(output) {
-    // Afficher les données reçues pour le continent sélectionné
-    console.log('Données reçues pour les continents:');
-    console.log(output);
-    
-    // Ici, tu peux appeler d'autres fonctions pour traiter ces données
-});
+//     // Afficher les données concaténées
+//     console.log('Données concaténées pour les continents :');
+//     console.log(combinedData);
+// }).fail(function(http_error) {
+//     let server_msg = http_error.responseText;
+//     let code = http_error.status;
+//     let code_label = http_error.statusText;
+//     console.error(`Erreur ${code} (${code_label}): ${server_msg}`);
+// });
 
-request.fail(function(http_error) {
-    let server_msg = http_error.responseText;
-    let code = http_error.status;
-    let code_label = http_error.statusText;
-    console.error(`Erreur ${code} (${code_label}): ${server_msg}`);
-});
-
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Choisir quel fichier JSON utiliser
 function getUrlByContinent(continent) {
@@ -180,3 +191,5 @@ function getDataByCountry(country, jsonFiles) {
 
 // file = getUrlByContinent(continent)
 // getDataByCountry(pays, file)
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
