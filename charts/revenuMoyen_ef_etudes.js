@@ -53,7 +53,8 @@ function fetchData(continent = null, country = null) {
                     // Filtrer les données pour le pays
                     const countryData = getDataByCountry(country, data);
                     // Calculer les moyennes par niveau d'étude pour le pays
-                    return calculerListeRevenusMoyens(countryData, "EdLevel");
+                    calculerListeRevenusMoyens(countryData, "EdLevel");
+                    console.log("resultat calcul moyenne pour france", calculerListeRevenusMoyens(countryData, "EdLevel"));
                 },
                 (http_error) => {
                     console.error(`Erreur lors de la récupération des données pour le pays : ${http_error.statusText}`);
