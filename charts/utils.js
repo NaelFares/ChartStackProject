@@ -190,11 +190,6 @@ function convertToEuros(value, currencyCode) {
     return valueConvertie;
 }
 
-// Exemple d'utilisation
-//convertToEuros(100, "GBP\tPound sterling");  // Convertir 100 USD en EUR
-//convertToEuros(500, "EUR European Euro");  // Convertir 500 GBP en EUR
-//convertToEuros(10000, "NA");  // Convertir 10 000 JPY en EUR
-//convertToEuros(200, "USD\tUnited States dollar");  // Convertir 200 AUD en EUR
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -370,52 +365,6 @@ function getDataByCountry(country, jsonFiles) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Calculer le revenu moyen selon un critère, avec exclusion des valeurs extrêmes
-function calculerListeRevenusMoyens(jsonData, critere) {
-    const revenusParCritere = {};
-
-    // Définir les seuils pour exclure les outliers
-    const revenuMin = 1000; // Par exemple : revenu minimum raisonnable
-    const revenuMax = 500000; // Par exemple : revenu maximum raisonnable
-
-    jsonData.forEach(item => {
-        const revenu = parseFloat(item.CompTotal || 0); // Revenu 
-        const devise = item.Currency; // Devise
-        const valeurCritere = item[critere]; // Valeur du critère
-
-        if (!isNaN(revenu) && devise && valeurCritere) {
-            const revenuEnEuros = convertToEuros(revenu, devise);
-
-            // Vérifier que le revenu converti est dans les limites acceptables
-            if (revenuEnEuros !== null && revenuEnEuros >= revenuMin && revenuEnEuros <= revenuMax) {
-                if (!revenusParCritere[valeurCritere]) {
-                    revenusParCritere[valeurCritere] = { total: 0, count: 0 };
-                }
-                revenusParCritere[valeurCritere].total += revenuEnEuros;
-                revenusParCritere[valeurCritere].count++;
-            } else {
-                console.warn(
-                    `Revenu exclu (hors seuils) : ${revenuEnEuros} EUR pour le critère ${valeurCritere}`
-                );
-            }
-        }
-    });
-
-    const criteres = [];
-    const revenusMoyens = [];
-
-    Object.keys(revenusParCritere)
-        .sort()
-        .forEach(cle => {
-            const { total, count } = revenusParCritere[cle];
-            criteres.push(cle);
-            revenusMoyens.push((total / count).toFixed(2)); // Calculer la moyenne
-        });
-
-    return { criteres, revenusMoyens };
-}
-
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function getCountries(jsonData) {
@@ -435,25 +384,7 @@ function getCountries(jsonData) {
     return countryValues; 
 }
 
-
-function updateCountry(chart, country, jsonData) {
-
-    let tabData = treatData(country,jsonData);
-    let years = tabData[0];
-    let values = tabData[1];
-
-    chart.data.labels = years;
-    
-    chart.data.datasets = [
-        {
-            label: "Nombre de médailles gagnées par année : " + country,
-            data: values,
-        }
-    ];
-    
-    chart.update();
-}
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function updateContinent(chart, country, jsonData) {
 
@@ -473,8 +404,9 @@ function updateContinent(chart, country, jsonData) {
     chart.update();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function addCountriesToDropDown(selectId, chart, jsonData) {
+function addCountriesToDropDown(selectId, chart, jsonData, critere) {
     // Récupérer le <select> existant via son ID
     var selectElement = document.getElementById(selectId);
     if (!selectElement) {
@@ -507,79 +439,13 @@ function addCountriesToDropDown(selectId, chart, jsonData) {
         selectElement.appendChild(option);
     }
 
-    // // Associer un événement 'change' au <select>
-    // selectElement.addEventListener('change', function() {
-    //     // Récupérer la valeur sélectionnée
-    //     var selectedCountry = this.value;
+    // Associer un événement 'change' au <select>
+    selectElement.addEventListener('change', function() {
+        // Récupérer la valeur sélectionnée
+        var selectedCountry = this.value;
 
-    //     // Appeler la fonction updateCountry avec la sélection
-    //     updateCountry(chart, selectedCountry, jsonData);
-    // });
-}
-
-
-
-
-function loadChartRevenuMoyenEfExperience(jsonData) {
-
-    const { criteres, revenusMoyens }  = calculerListeRevenusMoyens(jsonData, "YearsCodePro");
-
-    const chartRevenuMoyenEfExperience = document.getElementById('chartRevenuMoyenEfExperience');
-
-    var chart = new Chart(chartRevenuMoyenEfExperience, {
-        type: 'line',
-        data: {
-        labels: criteres,
-        datasets: [{
-            label: 'Revenus moyens',
-            data: revenusMoyens,
-            borderWidth: 1
-        }]
-        },
-        options: {
-        scales: {
-            y: {
-            beginAtZero: true
-            }
-        }
-        }
+        // Appeler la fonction updateCountry avec la sélection
+        updateCountry(chart, selectedCountry, jsonData, critere);
     });
-
-    return chart;
-}
-
-
-// Test sur les deux fonctions
-let continent = "Europe"; // Par exemple, "Amérique" ou "Europe"
-let file = getUrlByContinent(continent); // Obtenir le chemin du fichier JSON
-
-if (file) {
-    // Faire une requête AJAX pour récupérer les données du fichier JSON
-    let request = $.ajax({
-        type: "GET",
-        url: file
-    });
-
-
-    request.done(function(output) {
-        // Afficher les données reçues pour le continent sélectionné
-        console.log("Arrivée");
-        loadChartRevenuMoyenEfExperience(output);
-        // addCountriesToDropDown("selectPaysEfExperience",output) ;
-       
-
-        
-        // Ici, tu peux appeler d'autres fonctions pour traiter ces données
-    });
-
-    request.fail(function(http_error) {
-        let server_msg = http_error.responseText;
-        let code = http_error.status;
-        let code_label = http_error.statusText;
-        console.error(`Erreur ${code} (${code_label}): ${server_msg}`);
-    });
-} else {
-    console.error("Aucune requête AJAX n'a été effectuée.");
-
 }
 
