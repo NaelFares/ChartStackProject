@@ -16,6 +16,7 @@ function loadDataBySelectContinent(selectElement = null) {
             request.done(function (output) {
                 console.log(`Données pour ${continent} chargées.`);
                 loadChartRevenuMoyenEfExperience(output, "YearsCodePro"); // Charge le graphique
+                loadChartRevenuMoyenEfEtude(output, "EdLevel");
             });
 
             request.fail(function (http_error) {
@@ -44,6 +45,7 @@ function loadDataBySelectContinent(selectElement = null) {
                 request.done(function (output) {
                     console.log(`Données initiales pour ${continent} chargées.`);
                     loadChartRevenuMoyenEfExperience(output, "YearsCodePro"); // Charge le graphique
+                    loadChartRevenuMoyenEfEtude(output, "EdLevel");
                 });
 
                 request.fail(function (http_error) {
