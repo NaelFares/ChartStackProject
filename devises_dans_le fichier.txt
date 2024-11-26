@@ -31,6 +31,7 @@
 'HUF\tHungarian forint',
 'IDR\tIndonesian rupiah',
 'ILS\tIsraeli new shekel',
+'INR\tIndian rupee',
 'IRR\tIranian rial',
 'JPY\tJapanese yen',
 'LAK\tLao kip',
