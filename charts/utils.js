@@ -194,43 +194,28 @@ function convertToEuros(value, currencyCode) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Fonction pour récupérer les deux fichiers JSON
-function getAll() {
+function getAll(isArray=false) {
     // Définir les chemins des fichiers
     let file1 = "../data/survey_results_NA.json";
     let file2 = "../data/survey_results_WE.json";
 
-    // Effectuer deux requêtes AJAX pour récupérer les fichiers
-    let request1 = $.ajax({
-        type: "GET",
-        url: file1
-    });
+    try {
+        // Lire et parser les fichiers JSON
+        const json1 = JSON.parse(fs.readFileSync(file1, 'utf8'));
+        const json2 = JSON.parse(fs.readFileSync(file2, 'utf8'));
 
-    let request2 = $.ajax({
-        type: "GET",
-        url: file2
-    });
+        // Fusionner en fonction du type
+        const mergedJson = isArray 
+            ? { data: [...json1, ...json2] } // Si tableaux, les combiner sous une clé "data"
+            : { ...json1, ...json2 };       // Sinon fusionner les objets
 
-    // Retourner un objet avec les deux requêtes
-    return { request1, request2 };
+        return mergedJson;
+
+    } catch (error) {
+        console.error('Erreur lors de la fusion des fichiers JSON:', error.message);
+        return null;
+    }
 }
-
-// // Lancer les requêtes
-// let { request1, request2 } = getAll();
-
-// // Effectuer les deux requêtes AJAX
-// $.when(request1, request2).done(function(output1, output2) {
-//     // Concaténer les résultats des deux fichiers
-//     let combinedData = output1[0].concat(output2[0]);
-
-//     // Afficher les données concaténées
-//     console.log('Données concaténées pour les continents :');
-//     console.log(combinedData);
-// }).fail(function(http_error) {
-//     let server_msg = http_error.responseText;
-//     let code = http_error.status;
-//     let code_label = http_error.statusText;
-//     console.error(`Erreur ${code} (${code_label}): ${server_msg}`);
-// });
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -246,35 +231,6 @@ function getUrlByContinent(continent) {
             return null;
     }
 }
-
-// // Définir le continent choisi
-// let continent = "Europe"; // Par exemple, "Amérique" ou "Europe"
-// let file = getUrlByContinent(continent); // Obtenir le chemin du fichier JSON
-
-// if (file) {
-//     // Faire une requête AJAX pour récupérer les données du fichier JSON
-//     let request = $.ajax({
-//         type: "GET",
-//         url: file
-//     });
-
-//     request.done(function(output) {
-//         // Afficher les données reçues pour le continent sélectionné
-//         console.log('Données reçues pour le continent:');
-//         console.log(output);
-        
-//         // Ici, tu peux appeler d'autres fonctions pour traiter ces données
-//     });
-
-//     request.fail(function(http_error) {
-//         let server_msg = http_error.responseText;
-//         let code = http_error.status;
-//         let code_label = http_error.statusText;
-//         console.error(`Erreur ${code} (${code_label}): ${server_msg}`);
-//     });
-// } else {
-//     console.error("Aucune requête AJAX n'a été effectuée.");
-// }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -304,66 +260,103 @@ function getDataByCountry(country, jsonFiles) {
     return result;  // Retourner le tableau avec un objet par pays, contenant tous ses documents
 }
 
-// // Tester la fonction avec une requête AJAX
-// let request = $.ajax({
-//     type: "GET",
-//     url: "../data/survey_results_NA.json"
-// });
-
-// request.done(function(output) {
-//     // Utiliser la fonction pour récupérer les données de la France
-//     let data = getDataByCountry("United States of America", output);
-//     let data2 = getDataByCountry("Canada", output);
-
-//     // Afficher les 3 premiers éléments
-//     console.log(data);
-//     console.log(data2);
-
-// });
-
-// request.fail(function(http_error) {
-//     let server_msg = http_error.responseText;
-//     let code = http_error.status;
-//     let code_label = http_error.statusText;
-//     alert("Erreur " + code + " (" + code_label + ") : " + server_msg);
-// });
-
-
-// file = getUrlByContinent(continent)
-// getDataByCountry(pays, file)
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// // Test sur les deux fonctions
-// let continent = "Europe"; // Par exemple, "Amérique" ou "Europe"
-// let file = getUrlByContinent(continent); // Obtenir le chemin du fichier JSON
+// Calculer le revenu moyen selon un critère, avec exclusion des valeurs extrêmes
+function calculerListeRevenusMoyens(jsonData, critere, pays) {
+    const revenusParCritere = {};
 
-// if (file) {
-//     // Faire une requête AJAX pour récupérer les données du fichier JSON
-//     let request = $.ajax({
-//         type: "GET",
-//         url: file
-//     });
+    // Définir les seuils pour exclure les outliers
+    const revenuMin = 1000; // Par exemple : revenu minimum raisonnable
+    const revenuMax = 500000; // Par exemple : revenu maximum raisonnable
 
-//     request.done(function(output) {
-//         // Afficher les données reçues pour le continent sélectionné
-//         console.log('Données reçues pour le pays:');
-//         console.log(getDataByCountry("France", output));
-        
-//         // Ici, tu peux appeler d'autres fonctions pour traiter ces données
-//     });
+    jsonData.forEach(item => {
+        const revenu = parseFloat(item.CompTotal || 0); // Revenu 
+        const devise = item.Currency; // Devise
+        const valeurCritere = item[critere]; // Valeur du critère
+        const paysItem = item.Country; // Pays de l'item
 
-//     request.fail(function(http_error) {
-//         let server_msg = http_error.responseText;
-//         let code = http_error.status;
-//         let code_label = http_error.statusText;
-//         console.error(`Erreur ${code} (${code_label}): ${server_msg}`);
-//     });
-// } else {
-//     console.error("Aucune requête AJAX n'a été effectuée.");
-// }
+        // Si un pays spécifique est demandé, filtrer les données
+        if (pays !== "Tous" && paysItem !== pays) {
+            return; // Ignorer les données qui ne correspondent pas au pays
+        }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        if (!isNaN(revenu) && devise && valeurCritere) {
+            const revenuEnEuros = convertToEuros(revenu, devise);
+
+            // Vérifier que le revenu converti est dans les limites acceptables
+            if (revenuEnEuros !== null && revenuEnEuros >= revenuMin && revenuEnEuros <= revenuMax) {
+                if (!revenusParCritere[valeurCritere]) {
+                    revenusParCritere[valeurCritere] = { total: 0, count: 0 };
+                }
+                revenusParCritere[valeurCritere].total += revenuEnEuros;
+                revenusParCritere[valeurCritere].count++;
+            }
+        }
+    });
+
+    // Préparer les résultats triés par critère
+    const resultats = Object.keys(revenusParCritere)
+        .map(cle => {
+            const { total, count } = revenusParCritere[cle];
+            return { critere: cle, revenuMoyen: (total / count).toFixed(2) };
+        })
+        .sort((a, b) => a.critere.localeCompare(b.critere)); // Tri par ordre croissant des critères
+
+    // Extraire les critères et les revenus moyens
+    const criteres = resultats.map(res => res.critere);
+    const revenusMoyens = resultats.map(res => res.revenuMoyen);
+
+    return { criteres, revenusMoyens };
+}
+
+
+
+function updateCountry(chart, country, jsonData, critere) {
+
+    console.log(country);
+
+    const { criteres, revenusMoyens } = calculerListeRevenusMoyens(jsonData, critere, country);
+
+    // Séparation des critères en numériques et non numériques
+    const numericData = [];
+    const nonNumericData = [];
+
+    criteres.forEach((critere, index) => {
+        const revenu = revenusMoyens[index];
+        if (!isNaN(parseFloat(critere))) {
+            numericData.push({ critere: parseFloat(critere), revenu });
+        } else {
+            nonNumericData.push({ critere, revenu });
+        }
+    });
+
+    // Tri des données numériques
+    numericData.sort((a, b) => a.critere - b.critere);
+
+    // Recombinaison des données triées : numériques d'abord, non numériques ensuite
+    const sortedData = [
+        ...numericData.map(({ critere, revenu }) => ({ critere: critere.toString(), revenu })),
+        ...nonNumericData
+    ];
+
+    const sortedLabels = sortedData.map(item => item.critere);
+    const sortedRevenus = sortedData.map(item => item.revenu);
+
+    // Mise à jour des labels
+    chart.data.labels = sortedLabels;
+
+    // Mise à jour des données du dataset principal
+    if (chart.data.datasets.length > 0) {
+        chart.data.datasets[0].data = sortedRevenus; // Met à jour les données uniquement
+    } else {
+        console.error("Le graphique ne contient aucun dataset pour mettre à jour les données.");
+    }
+
+    // Mise à jour du graphique
+    chart.update();
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
