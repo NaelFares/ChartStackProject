@@ -83,7 +83,7 @@ function loadChartRevenuMoyenEfEtude(jsonData, critere) {
         }
     });
 
-    addCountriesToDropDown("selectPaysEfExperience", chart, jsonData, critere);
+    addCountriesToDropDown("selectPaysEfEtude", chart, jsonData, critere);
 
     return chart;
 }
