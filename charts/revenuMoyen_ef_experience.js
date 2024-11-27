@@ -87,6 +87,3 @@ function loadChartRevenuMoyenEfExperience(jsonData, critere) {
 
     return chart;
 }
-
-
-

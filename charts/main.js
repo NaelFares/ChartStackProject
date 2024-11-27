@@ -2,6 +2,7 @@
 function loadDataBySelectContinent(selectElement = null) {
     // Si un élément spécifique est fourni, utiliser sa valeur ; sinon, charger tous les `select` ayant la classe "continents"
     if (selectElement) {
+        const idSelect = $(selectElement).attr("id"); // Récupère l'id du <select>
         const continent = $(selectElement).val(); // Récupère la valeur sélectionnée dans ce <select>
         console.log("Continent sélectionné : " + continent);
         const file = getUrlByContinent(continent); // Obtenir l'URL du fichier correspondant au continent
@@ -15,8 +16,7 @@ function loadDataBySelectContinent(selectElement = null) {
 
             request.done(function (output) {
                 console.log(`Données pour ${continent} chargées.`);
-                loadChartRevenuMoyenEfExperience(output, "YearsCodePro"); // Charge le graphique
-                loadChartRevenuMoyenEfEtude(output, "EdLevel");
+                loadChartByIdSelect(output, idSelect) // Charge le graphique du select concerné
             });
 
             request.fail(function (http_error) {
@@ -60,6 +60,21 @@ function loadDataBySelectContinent(selectElement = null) {
         });
     }
 }
+
+
+// Fonction qui détermine la fonction à appeler en fonction du select
+function loadChartByIdSelect(output, idSelect) {
+    switch (idSelect) {
+        case "selectContinentEfExperience":
+            return loadChartRevenuMoyenEfExperience(output, "YearsCodePro");
+        case "selectContinentEfEtudes":
+            return loadChartRevenuMoyenEfEtude(output, "EdLevel");
+        default:
+            console.error("Id Select introuvable :", idSelect);
+            return null;
+    }
+}
+
 
 // Gestion des événements au chargement de la page
 $(document).ready(function () {
