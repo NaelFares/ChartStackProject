@@ -46,6 +46,8 @@ function loadDataBySelectContinent(selectElement = null) {
                     console.log(`Données initiales pour ${continent} chargées.`);
                     loadChartRevenuMoyenEfExperience(output, "YearsCodePro"); // Charge le graphique
                     loadChartRevenuMoyenEfEtude(output, "EdLevel");
+                    loadChartRevenuMoyenEfCloud(output, "PlatformHaveWorkedWith");
+                    loadChartRevenuMoyenEfFramework(output, "WebframeHaveWorkedWith");
                 });
 
                 request.fail(function (http_error) {
@@ -69,6 +71,10 @@ function loadChartByIdSelect(output, idSelect) {
             return loadChartRevenuMoyenEfExperience(output, "YearsCodePro");
         case "selectContinentEfEtudes":
             return loadChartRevenuMoyenEfEtude(output, "EdLevel");
+        case "selectContinentEfCloud":
+            return loadChartRevenuMoyenEfCloud(output, "PlatformHaveWorkedWith");
+        case "selectContinentEfFramework":
+            return loadChartRevenuMoyenEfFramework(output, "WebframeHaveWorkedWith");
         default:
             console.error("Id Select introuvable :", idSelect);
             return null;
