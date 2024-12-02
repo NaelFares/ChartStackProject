@@ -114,6 +114,7 @@ function calculerListeRevenusMoyensSelonCloud(jsonData, critere, pays) {
             // Vérifier que le revenu converti est dans les limites acceptables
             if (revenuEnEuros !== null && revenuEnEuros >= revenuMin && revenuEnEuros <= revenuMax) {
                 // Extraire les plateformes sans doublons
+                console.log("Valeur du critère avant split :", valeurCritere);
                 const plateformes = valeurCritere.split(";").map(p => p.trim()).filter(Boolean);
                 plateformes.forEach(plateforme => {
                     if (!revenusParPlateforme[plateforme]) {
@@ -196,6 +197,7 @@ fetch('../data/survey_results_NA.json') // Remplace le chemin par celui de ton f
         const result = calculerListeRevenusMoyensSelonCloud(jsonData, "PlatformHaveWorkedWith", "France");
         console.log("Plateformes : ", result.plateformes);
         console.log("Revenus moyens : ", result.revenusMoyens);
+        console.log(calculerListeRevenusMoyensSelonCloud(jsonData, "PlatformHaveWorkedWith", "France"));
     })
     .catch(error => console.error("Erreur lors du chargement du fichier JSON :", error));
 
