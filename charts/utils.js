@@ -262,104 +262,6 @@ function getDataByCountry(country, jsonFiles) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Calculer le revenu moyen selon un critère, avec exclusion des valeurs extrêmes
-function calculerListeRevenusMoyens(jsonData, critere, pays) {
-    const revenusParCritere = {};
-
-    // Définir les seuils pour exclure les outliers
-    const revenuMin = 1000; // Par exemple : revenu minimum raisonnable
-    const revenuMax = 500000; // Par exemple : revenu maximum raisonnable
-
-    jsonData.forEach(item => {
-        const revenu = parseFloat(item.CompTotal || 0); // Revenu 
-        const devise = item.Currency; // Devise
-        const valeurCritere = item[critere]; // Valeur du critère
-        const paysItem = item.Country; // Pays de l'item
-
-        // Si un pays spécifique est demandé, filtrer les données
-        if (pays !== "Tous" && paysItem !== pays) {
-            return; // Ignorer les données qui ne correspondent pas au pays
-        }
-
-        if (!isNaN(revenu) && devise && valeurCritere) {
-            const revenuEnEuros = convertToEuros(revenu, devise);
-
-            // Vérifier que le revenu converti est dans les limites acceptables
-            if (revenuEnEuros !== null && revenuEnEuros >= revenuMin && revenuEnEuros <= revenuMax) {
-                if (!revenusParCritere[valeurCritere]) {
-                    revenusParCritere[valeurCritere] = { total: 0, count: 0 };
-                }
-                revenusParCritere[valeurCritere].total += revenuEnEuros;
-                revenusParCritere[valeurCritere].count++;
-            }
-        }
-    });
-
-    // Préparer les résultats triés par critère
-    const resultats = Object.keys(revenusParCritere)
-        .map(cle => {
-            const { total, count } = revenusParCritere[cle];
-            return { critere: cle, revenuMoyen: (total / count).toFixed(2) };
-        })
-        .sort((a, b) => a.critere.localeCompare(b.critere)); // Tri par ordre croissant des critères
-
-    // Extraire les critères et les revenus moyens
-    const criteres = resultats.map(res => res.critere);
-    const revenusMoyens = resultats.map(res => res.revenuMoyen);
-
-    return { criteres, revenusMoyens };
-}
-
-
-
-function updateCountry(chart, country, jsonData, critere) {
-
-    console.log(country);
-
-    const { criteres, revenusMoyens } = calculerListeRevenusMoyens(jsonData, critere, country);
-
-    // Séparation des critères en numériques et non numériques
-    const numericData = [];
-    const nonNumericData = [];
-
-    criteres.forEach((critere, index) => {
-        const revenu = revenusMoyens[index];
-        if (!isNaN(parseFloat(critere))) {
-            numericData.push({ critere: parseFloat(critere), revenu });
-        } else {
-            nonNumericData.push({ critere, revenu });
-        }
-    });
-
-    // Tri des données numériques
-    numericData.sort((a, b) => a.critere - b.critere);
-
-    // Recombinaison des données triées : numériques d'abord, non numériques ensuite
-    const sortedData = [
-        ...numericData.map(({ critere, revenu }) => ({ critere: critere.toString(), revenu })),
-        ...nonNumericData
-    ];
-
-    const sortedLabels = sortedData.map(item => item.critere);
-    const sortedRevenus = sortedData.map(item => item.revenu);
-
-    // Mise à jour des labels
-    chart.data.labels = sortedLabels;
-
-    // Mise à jour des données du dataset principal
-    if (chart.data.datasets.length > 0) {
-        chart.data.datasets[0].data = sortedRevenus; // Met à jour les données uniquement
-    } else {
-        console.error("Le graphique ne contient aucun dataset pour mettre à jour les données.");
-    }
-
-    // Mise à jour du graphique
-    chart.update();
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 function getCountries(jsonData) {
 
     let countryValues = [];
@@ -437,8 +339,20 @@ function addCountriesToDropDown(selectId, chart, jsonData, critere) {
         // Récupérer la valeur sélectionnée
         var selectedCountry = this.value;
 
-        // Appeler la fonction updateCountry avec la sélection
-        updateCountry(chart, selectedCountry, jsonData, critere);
+        var pageName = $("body").data("page-name"); //Récupère le nom de la page dans le body
+
+        switch (pageName) {
+            case "dashboard1":
+                return updateCountry(chart, selectedCountry, jsonData, critere); // Appeler la fonction updateCountry avec la sélection
+            case "dashboard2":
+                return updateCountrySelonPlateforme(chart, selectedCountry, jsonData, critere);
+            case "dashboard3":
+                return null
+            default:
+                console.error("Nom de page inconnu pour addCountriesToDropDown:", pageName);
+                return null;
+        }
+
     });
 }
 
@@ -522,6 +436,104 @@ function updateCountry(chart, country, jsonData, critere) {
     ];
 
     const sortedLabels = sortedData.map(item => item.critere);
+    const sortedRevenus = sortedData.map(item => item.revenu);
+
+    // Mise à jour des labels
+    chart.data.labels = sortedLabels;
+
+    // Mise à jour des données du dataset principal
+    if (chart.data.datasets.length > 0) {
+        chart.data.datasets[0].data = sortedRevenus; // Met à jour les données uniquement
+    } else {
+        console.error("Le graphique ne contient aucun dataset pour mettre à jour les données.");
+    }
+
+    // Mise à jour du graphique
+    chart.update();
+}
+
+
+// Calculer le revenu moyen selon les plateformes cloud utilisées, avec exclusion des valeurs extrêmes
+function calculerListeRevenusMoyensSelonPlateforme(jsonData, critere, pays) {
+    const revenusParPlateforme = {};
+
+    // Définir les seuils pour exclure les outliers
+    const revenuMin = 1000; // Par exemple : revenu minimum raisonnable
+    const revenuMax = 500000; // Par exemple : revenu maximum raisonnable
+
+    jsonData.forEach(item => {
+        const revenu = parseFloat(item.CompTotal || 0); // Revenu
+        const devise = item.Currency; // Devise
+        const valeurCritere = item[critere]; // Chaîne des plateformes cloud
+        const paysItem = item.Country; // Pays de l'item
+
+        // Si un pays spécifique est demandé, filtrer les données
+        if (pays !== "Tous" && paysItem !== pays) {
+            return; // Ignorer les données qui ne correspondent pas au pays
+        }
+
+        if (!isNaN(revenu) && devise && valeurCritere) {
+            const revenuEnEuros = convertToEuros(revenu, devise);
+
+            // Vérifier que le revenu converti est dans les limites acceptables
+            if (revenuEnEuros !== null && revenuEnEuros >= revenuMin && revenuEnEuros <= revenuMax) {
+                // Extraire les plateformes sans doublons
+                const plateformes = valeurCritere.split(";").map(p => p.trim()).filter(Boolean);
+                plateformes.forEach(plateforme => {
+                    if (!revenusParPlateforme[plateforme]) {
+                        revenusParPlateforme[plateforme] = { total: 0, count: 0 };
+                    }
+                    revenusParPlateforme[plateforme].total += revenuEnEuros;
+                    revenusParPlateforme[plateforme].count++;
+                });
+            }
+        }
+    });
+
+    // Préparer les résultats triés par plateforme
+    const resultats = Object.keys(revenusParPlateforme)
+        .map(plateforme => {
+            const { total, count } = revenusParPlateforme[plateforme];
+            return { plateforme, revenuMoyen: (total / count).toFixed(2) };
+        })
+        .sort((a, b) => a.plateforme.localeCompare(b.plateforme)); // Tri par ordre croissant des plateformes
+
+    // Extraire les plateformes et les revenus moyens
+    const plateformes = resultats.map(res => res.plateforme);
+    const revenusMoyens = resultats.map(res => res.revenuMoyen);
+
+    return { plateformes, revenusMoyens };
+}
+
+
+function updateCountrySelonPlateforme(chart, country, jsonData, critere) {
+   
+    // Appeler la fonction adaptée pour calculer les revenus moyens par plateforme
+    const { plateformes, revenusMoyens } = calculerListeRevenusMoyensSelonPlateforme(jsonData, critere, country);
+
+    // Séparation des plateformes en numériques et non numériques (bien que peu probable ici)
+    const numericData = [];
+    const nonNumericData = [];
+
+    plateformes.forEach((plateforme, index) => {
+        const revenu = revenusMoyens[index];
+        if (!isNaN(parseFloat(plateforme))) {
+            numericData.push({ plateforme: parseFloat(plateforme), revenu });
+        } else {
+            nonNumericData.push({ plateforme, revenu });
+        }
+    });
+
+    // Tri des données numériques
+    numericData.sort((a, b) => a.plateforme - b.plateforme);
+
+    // Recombinaison des données triées : numériques d'abord, non numériques ensuite
+    const sortedData = [
+        ...numericData.map(({ plateforme, revenu }) => ({ plateforme: plateforme.toString(), revenu })),
+        ...nonNumericData
+    ];
+
+    const sortedLabels = sortedData.map(item => item.plateforme);
     const sortedRevenus = sortedData.map(item => item.revenu);
 
     // Mise à jour des labels

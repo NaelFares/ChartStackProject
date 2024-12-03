@@ -29,6 +29,9 @@ function loadDataBySelectContinent(selectElement = null) {
             console.error("Aucun fichier trouvé pour ce continent.");
         }
     } else {
+
+        const pageName = $("body").data("page-name"); //Récupère le nom de la page dans le body
+
         // Charger les données pour tous les `select` ayant la classe "continents"
         $(".continents").each(function () {
             const continent = $(this).val(); // Récupère la valeur sélectionnée dans chaque <select>
@@ -44,10 +47,7 @@ function loadDataBySelectContinent(selectElement = null) {
 
                 request.done(function (output) {
                     console.log(`Données initiales pour ${continent} chargées.`);
-                    loadChartRevenuMoyenEfExperience(output, "YearsCodePro"); // Charge le graphique
-                    loadChartRevenuMoyenEfEtude(output, "EdLevel");
-                    loadChartRevenuMoyenEfCloud(output, "PlatformHaveWorkedWith");
-                    loadChartRevenuMoyenEfFramework(output, "WebframeHaveWorkedWith");
+                    loadChartByPage(output, pageName); // Déterminer la fonction de chargement des graphiques à appeler en fonction de la page
                 });
 
                 request.fail(function (http_error) {
@@ -63,6 +63,21 @@ function loadDataBySelectContinent(selectElement = null) {
     }
 }
 
+
+// Fonction qui détermine la fonction à appeler en fonction de la page dans laquelle on est
+function loadChartByPage(output, pageName) {
+    switch (pageName) {
+        case "dashboard1":
+            return loadChartRevenuMoyenEfExperience(output, "YearsCodePro"), loadChartRevenuMoyenEfEtude(output, "EdLevel");
+        case "dashboard2":
+            return loadChartRevenuMoyenEfCloud(output, "PlatformHaveWorkedWith"), loadChartRevenuMoyenEfFramework(output, "WebframeHaveWorkedWith");
+        case "dashboard3":
+            return null
+        default:
+            console.error("Nom de page inconnu :", pageName);
+            return null;
+    }
+}
 
 // Fonction qui détermine la fonction à appeler en fonction du select
 function loadChartByIdSelect(output, idSelect) {

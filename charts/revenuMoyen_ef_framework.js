@@ -16,13 +16,13 @@ function loadChartRevenuMoyenEfFramework(jsonData, critere) {
     }
 
     // Extraction des critères et revenus moyens
-    const { criteres, revenusMoyens } = calculerListeRevenusMoyens(jsonData, critere, "Tous");
+    const { plateformes, revenusMoyens } = calculerListeRevenusMoyensSelonPlateforme(jsonData, critere, "Tous");
 
     // Séparation des données numériques et non numériques
     const numericData = [];
     const nonNumericData = [];
 
-    criteres.forEach((critere, index) => {
+    plateformes.forEach((critere, index) => {
         const revenu = revenusMoyens[index];
         if (!isNaN(parseFloat(critere))) {
             numericData.push({ critere: parseFloat(critere), revenu });
@@ -76,7 +76,12 @@ function loadChartRevenuMoyenEfFramework(jsonData, critere) {
                 x: {
                     title: {
                         display: true,
-                        text: "Plateforme de cloud utilisée"
+                        text: "Framework utilisé"
+                    },
+                    ticks: {
+                        autoSkip: false, // Désactiver l'échantillonnage des ticks
+                        maxRotation: 90, // Rotation maximale des labels pour éviter les chevauchements
+                        minRotation: 45  // Rotation minimale des labels
                     }
                 }
             }
