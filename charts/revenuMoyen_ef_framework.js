@@ -16,7 +16,7 @@ function loadChartRevenuMoyenEfFramework(jsonData, critere) {
     }
 
     // Extraction des critères et revenus moyens
-    const { plateformes, revenusMoyens } = calculerListeRevenusMoyensSelonPlateforme(jsonData, critere, "Tous");
+    const { plateformes, revenusMoyens } = calculerListeRevenusMoyensSelonPlateforme(jsonData, critere, "Tous", "Tous");
 
     // Séparation des données numériques et non numériques
     const numericData = [];
@@ -88,7 +88,8 @@ function loadChartRevenuMoyenEfFramework(jsonData, critere) {
         }
     });
 
-    addCountriesToDropDown("selectPaysEfFramework", chart, jsonData, critere);
+    addCountriesToDropDown("selectPaysEfFramework", chart, jsonData, critere, "selectExperienceEfFramework");
+    addAnneeExpToDropDown("selectExperienceEfFramework", chart, jsonData, critere, "selectPaysEfFramework");
 
     return chart;
 }

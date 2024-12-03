@@ -279,6 +279,45 @@ function getCountries(jsonData) {
     return countryValues; 
 }
 
+function getAnneeExperiences(jsonData) {
+    let anneeExpValues = [];
+
+    // Parcourir toutes les données avec une boucle for
+    for (let i = 0; i < jsonData.length; i++) {
+        let e = jsonData[i];
+
+        // Ajouter la valeur si elle n'existe pas déjà dans le tableau
+        if (e.YearsCodePro && !anneeExpValues.includes(e.YearsCodePro)) {
+            anneeExpValues.push(e.YearsCodePro);
+        }
+    }
+
+    // Trier les valeurs : "Less than 1 year" en premier, numériques, puis non numériques
+    anneeExpValues.sort((a, b) => {
+        // Prioriser "Less than 1 year"
+        if (a === "Less than 1 year") return -1;
+        if (b === "Less than 1 year") return 1;
+
+        // Convertir les valeurs en nombres si elles sont numériques
+        const numA = !isNaN(a) ? parseFloat(a) : null;
+        const numB = !isNaN(b) ? parseFloat(b) : null;
+
+        // Si les deux sont numériques, comparer leurs valeurs
+        if (numA !== null && numB !== null) {
+            return numA - numB;
+        }
+
+        // Si l'un est numérique et pas l'autre, le numérique vient en premier
+        if (numA !== null) return -1;
+        if (numB !== null) return 1;
+
+        // Les deux ne sont pas numériques, comparer comme chaînes
+        return a.localeCompare(b);
+    });
+
+    return anneeExpValues;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function updateContinent(chart, country, jsonData) {
@@ -301,11 +340,11 @@ function updateContinent(chart, country, jsonData) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function addCountriesToDropDown(selectId, chart, jsonData, critere) {
+function addCountriesToDropDown(selectIdCountry, chart, jsonData, critere, selectIdAnneeExp = null) {
     // Récupérer le <select> existant via son ID
-    var selectElement = document.getElementById(selectId);
+    var selectElement = document.getElementById(selectIdCountry);
     if (!selectElement) {
-        console.error(`Aucun élément <select> trouvé avec l'ID : ${selectId}`);
+        console.error(`Aucun élément <select> trouvé avec l'ID : ${selectIdCountry}`);
         return;
     }
 
@@ -339,23 +378,130 @@ function addCountriesToDropDown(selectId, chart, jsonData, critere) {
         // Récupérer la valeur sélectionnée
         var selectedCountry = this.value;
 
-        var pageName = $("body").data("page-name"); //Récupère le nom de la page dans le body
-
-        switch (pageName) {
-            case "dashboard1":
-                return updateCountry(chart, selectedCountry, jsonData, critere); // Appeler la fonction updateCountry avec la sélection
-            case "dashboard2":
-                return updateCountrySelonPlateforme(chart, selectedCountry, jsonData, critere);
-            case "dashboard3":
-                return null
-            default:
-                console.error("Nom de page inconnu pour addCountriesToDropDown:", pageName);
-                return null;
+        if(selectIdAnneeExp){
+            var selectAnneeExp = document.getElementById(selectIdAnneeExp);
+            var anneeExp = selectAnneeExp.value;
+            updateChart(chart, selectedCountry, jsonData, critere, anneeExp);
+        } else {
+            updateChart(chart, selectedCountry, jsonData, critere); 
         }
-
+    
     });
 }
 
+
+function addAnneeExpToDropDown(selectIdAnneExp, chart, jsonData, critere, selectIdCountry) {
+    // Récupérer le <select> existant via son ID
+    var selectElement = document.getElementById(selectIdAnneExp);
+    if (!selectElement) {
+        console.error(`Aucun élément <select> trouvé avec l'ID : ${selectIdAnneExp}`);
+        return;
+    }
+
+    // Effacer les options actuelles 
+    selectElement.innerHTML = '';
+
+    // Ajouter l'option "Tous les pays"
+    let allAnneeExperiencesOption = document.createElement('option');
+    allAnneeExperiencesOption.value = "Tous";
+    allAnneeExperiencesOption.text = "Toutes";
+    allAnneeExperiencesOption.style.color = "black";
+    allAnneeExperiencesOption.style.backgroundColor = "white"; // Applique le style donné
+    selectElement.appendChild(allAnneeExperiencesOption);
+
+    // Récupérer la liste des pays et les trier
+    let anneeExperiences = getAnneeExperiences(jsonData);
+
+    // Ajouter chaque pays au <select> avec les styles donnés
+    for (let i = 0; i < anneeExperiences.length; i++) {
+        let option = document.createElement('option');
+        option.value = anneeExperiences[i];
+        option.text = anneeExperiences[i];
+        option.style.color = "black"; // Applique le style donné
+        option.style.backgroundColor = "white"; // Applique le style donné
+        selectElement.appendChild(option);
+    }
+
+    // Associer un événement 'change' au <select>
+    selectElement.addEventListener('change', function() {
+        // Récupérer la valeur sélectionnée
+        var selectedAnneeExp = this.value;
+        var selectCountry = document.getElementById(selectIdCountry);
+        var selectedCountry = selectCountry.value;
+
+        updateChart(chart, selectedCountry, jsonData, critere, selectedAnneeExp);
+      
+    
+    });
+}
+
+
+function updateChart(chart, country, jsonData, critere, anneeExp=null) {
+
+    console.log(country);
+
+    var pageName = $("body").data("page-name"); //Récupère le nom de la page dans le body
+
+    // Déclaration de variables avant le switch
+    let params = [];
+    let revenusMoyens = [];
+
+    switch (pageName) {
+        case "dashboard1": {
+            ({ criteres: params, revenusMoyens } = calculerListeRevenusMoyens(jsonData, critere, country));
+            break;
+        }
+        case "dashboard2": {
+            ({ plateformes: params, revenusMoyens } = calculerListeRevenusMoyensSelonPlateforme(jsonData, critere, country, anneeExp));
+            break;
+        }
+        case "dashboard3": {
+            break;
+        }
+        default: {
+            console.error("Nom de page inconnu pour addCountriesToDropDown:", pageName);
+            return;
+        }
+    }
+
+    // Séparation des critères en numériques et non numériques
+    const numericData = [];
+    const nonNumericData = [];
+
+    params.forEach((param, index) => {
+        const revenu = revenusMoyens[index];
+        if (!isNaN(parseFloat(param))) {
+            numericData.push({ param: parseFloat(param), revenu });
+        } else {
+            nonNumericData.push({ param, revenu });
+        }
+    });
+
+    // Tri des données numériques
+    numericData.sort((a, b) => a.param - b.param);
+
+    // Recombinaison des données triées : numériques d'abord, non numériques ensuite
+    const sortedData = [
+        ...numericData.map(({ param, revenu }) => ({ param: param.toString(), revenu })),
+        ...nonNumericData
+    ];
+
+    const sortedLabels = sortedData.map(item => item.param);
+    const sortedRevenus = sortedData.map(item => item.revenu);
+
+    // Mise à jour des labels
+    chart.data.labels = sortedLabels;
+
+    // Mise à jour des données du dataset principal
+    if (chart.data.datasets.length > 0) {
+        chart.data.datasets[0].data = sortedRevenus; // Met à jour les données uniquement
+    } else {
+        console.error("Le graphique ne contient aucun dataset pour mettre à jour les données.");
+    }
+
+    // Mise à jour du graphique
+    chart.update();
+}
 
 
 // Calculer le revenu moyen selon un critère, avec exclusion des valeurs extrêmes
@@ -407,54 +553,8 @@ function calculerListeRevenusMoyens(jsonData, critere, pays) {
 }
 
 
-function updateCountry(chart, country, jsonData, critere) {
-
-    console.log(country);
-
-    const { criteres, revenusMoyens } = calculerListeRevenusMoyens(jsonData, critere, country);
-
-    // Séparation des critères en numériques et non numériques
-    const numericData = [];
-    const nonNumericData = [];
-
-    criteres.forEach((critere, index) => {
-        const revenu = revenusMoyens[index];
-        if (!isNaN(parseFloat(critere))) {
-            numericData.push({ critere: parseFloat(critere), revenu });
-        } else {
-            nonNumericData.push({ critere, revenu });
-        }
-    });
-
-    // Tri des données numériques
-    numericData.sort((a, b) => a.critere - b.critere);
-
-    // Recombinaison des données triées : numériques d'abord, non numériques ensuite
-    const sortedData = [
-        ...numericData.map(({ critere, revenu }) => ({ critere: critere.toString(), revenu })),
-        ...nonNumericData
-    ];
-
-    const sortedLabels = sortedData.map(item => item.critere);
-    const sortedRevenus = sortedData.map(item => item.revenu);
-
-    // Mise à jour des labels
-    chart.data.labels = sortedLabels;
-
-    // Mise à jour des données du dataset principal
-    if (chart.data.datasets.length > 0) {
-        chart.data.datasets[0].data = sortedRevenus; // Met à jour les données uniquement
-    } else {
-        console.error("Le graphique ne contient aucun dataset pour mettre à jour les données.");
-    }
-
-    // Mise à jour du graphique
-    chart.update();
-}
-
-
 // Calculer le revenu moyen selon les plateformes cloud utilisées, avec exclusion des valeurs extrêmes
-function calculerListeRevenusMoyensSelonPlateforme(jsonData, critere, pays) {
+function calculerListeRevenusMoyensSelonPlateforme(jsonData, critere, pays, anneeExp) {
     const revenusParPlateforme = {};
 
     // Définir les seuils pour exclure les outliers
@@ -466,10 +566,16 @@ function calculerListeRevenusMoyensSelonPlateforme(jsonData, critere, pays) {
         const devise = item.Currency; // Devise
         const valeurCritere = item[critere]; // Chaîne des plateformes cloud
         const paysItem = item.Country; // Pays de l'item
+        const anneeExpItem = item.YearsCodePro; // Années d'expérience professionnelles
 
         // Si un pays spécifique est demandé, filtrer les données
         if (pays !== "Tous" && paysItem !== pays) {
             return; // Ignorer les données qui ne correspondent pas au pays
+        }
+
+        // Si une année d'expérience spécifique est demandée, filtrer les données
+        if (anneeExp !== "Tous" && anneeExpItem !== anneeExp) {
+            return; // Ignorer les données qui ne correspondent pas à l'année d'expérience
         }
 
         if (!isNaN(revenu) && devise && valeurCritere) {
@@ -503,49 +609,4 @@ function calculerListeRevenusMoyensSelonPlateforme(jsonData, critere, pays) {
     const revenusMoyens = resultats.map(res => res.revenuMoyen);
 
     return { plateformes, revenusMoyens };
-}
-
-
-function updateCountrySelonPlateforme(chart, country, jsonData, critere) {
-   
-    // Appeler la fonction adaptée pour calculer les revenus moyens par plateforme
-    const { plateformes, revenusMoyens } = calculerListeRevenusMoyensSelonPlateforme(jsonData, critere, country);
-
-    // Séparation des plateformes en numériques et non numériques (bien que peu probable ici)
-    const numericData = [];
-    const nonNumericData = [];
-
-    plateformes.forEach((plateforme, index) => {
-        const revenu = revenusMoyens[index];
-        if (!isNaN(parseFloat(plateforme))) {
-            numericData.push({ plateforme: parseFloat(plateforme), revenu });
-        } else {
-            nonNumericData.push({ plateforme, revenu });
-        }
-    });
-
-    // Tri des données numériques
-    numericData.sort((a, b) => a.plateforme - b.plateforme);
-
-    // Recombinaison des données triées : numériques d'abord, non numériques ensuite
-    const sortedData = [
-        ...numericData.map(({ plateforme, revenu }) => ({ plateforme: plateforme.toString(), revenu })),
-        ...nonNumericData
-    ];
-
-    const sortedLabels = sortedData.map(item => item.plateforme);
-    const sortedRevenus = sortedData.map(item => item.revenu);
-
-    // Mise à jour des labels
-    chart.data.labels = sortedLabels;
-
-    // Mise à jour des données du dataset principal
-    if (chart.data.datasets.length > 0) {
-        chart.data.datasets[0].data = sortedRevenus; // Met à jour les données uniquement
-    } else {
-        console.error("Le graphique ne contient aucun dataset pour mettre à jour les données.");
-    }
-
-    // Mise à jour du graphique
-    chart.update();
 }

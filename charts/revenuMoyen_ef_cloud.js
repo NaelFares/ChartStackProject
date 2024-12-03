@@ -16,7 +16,7 @@ function loadChartRevenuMoyenEfCloud(jsonData, critere) {
     }
 
     // Extraction des critères et revenus moyens
-    const { plateformes, revenusMoyens } = calculerListeRevenusMoyensSelonPlateforme(jsonData, critere, "Tous");
+    const { plateformes, revenusMoyens } = calculerListeRevenusMoyensSelonPlateforme(jsonData, critere, "Tous", "Tous");
 
     // Séparation des données numériques et non numériques
     const numericData = [];
@@ -88,7 +88,8 @@ function loadChartRevenuMoyenEfCloud(jsonData, critere) {
         }
     });
 
-    addCountriesToDropDown("selectPaysEfCloud", chart, jsonData, critere);
+    addCountriesToDropDown("selectPaysEfCloud", chart, jsonData, critere, "selectExperienceEfCloud");
+    addAnneeExpToDropDown("selectExperienceEfCloud", chart, jsonData, critere, "selectPaysEfCloud");
 
     return chart;
 }
