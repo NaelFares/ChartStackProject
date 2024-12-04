@@ -47,7 +47,7 @@ function loadChartRevenuMoyenEfExperience(jsonData, critere) {
 
     // Création du graphique à barres avec légendes
     var chart = new Chart(chartRevenuMoyenEfExperience, {
-        type: 'bar',
+        type: 'line',
         data: {
             labels: sortedLabels,
             datasets: [{

@@ -59,6 +59,7 @@ function loadChartRevenuMoyenEfFramework(jsonData, critere) {
             }]
         },
         options: {
+            indexAxis: 'y', // Orientation horizontale
             plugins: {
                 legend: {
                     display: true, // Affiche la légende
