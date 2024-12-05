@@ -303,6 +303,26 @@ function getAnneeExperiences(jsonData) {
     return anneeExpValues;
 }
 
+
+function getDevType(jsonData) {
+    let devTypeValues = [];
+
+    // Parcourir toutes les données avec une boucle for
+    for (let i = 0; i < jsonData.length; i++) {
+        let e = jsonData[i];
+
+        // Ajouter la valeur si elle n'existe pas déjà dans le tableau
+        if (e.YearsCodePro && !devTypeValues.includes(e.DevType)) {
+            devTypeValues.push(e.DevType);
+        }
+    }
+
+    // Trier les valeurs par ordre alphabétique
+    devTypeValues.sort((a, b) => a.localeCompare(b));
+
+    return devTypeValues;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function updateContinent(chart, country, jsonData) {
@@ -386,7 +406,7 @@ function addAnneeExpToDropDown(selectIdAnneExp, chart, jsonData, critere, select
     // Effacer les options actuelles 
     selectElement.innerHTML = '';
 
-    // Ajouter l'option "Tous les pays"
+    // Ajouter l'option "Toutes les années d'expériences"
     let allAnneeExperiencesOption = document.createElement('option');
     allAnneeExperiencesOption.value = "Tous";
     allAnneeExperiencesOption.text = "Toutes";
@@ -420,6 +440,89 @@ function addAnneeExpToDropDown(selectIdAnneExp, chart, jsonData, critere, select
     });
 }
 
+function addDevTypeToDropDown(selectIdDevType, chart, jsonData, critere, selectIdTop, divIdTitle) {
+    // Récupérer le <select> existant via son ID
+    var selectElement = document.getElementById(selectIdDevType);
+    if (!selectElement) {
+        console.error(`Aucun élément <select> trouvé avec l'ID : ${selectIdDevType}`);
+        return;
+    }
+
+    // Effacer les options actuelles 
+    selectElement.innerHTML = '';
+
+    // Récupérer la liste des pays et les trier
+    let devTypes = getDevType(jsonData);
+
+    // Ajouter chaque pays au <select> avec les styles donnés
+    for (let i = 0; i < devTypes.length; i++) {
+        let option = document.createElement('option');
+        option.value = devTypes[i];
+        option.text = devTypes[i];
+        option.style.color = "black"; // Applique le style donné
+        option.style.backgroundColor = "white"; // Applique le style donné
+        selectElement.appendChild(option);
+    }
+
+    // Associer un événement 'change' au <select>
+    selectElement.addEventListener('change', function() {
+        // Récupérer la valeur sélectionnée
+        var selectedDevType = this.value;
+        var selectTop = document.getElementById(selectIdTop);
+        var selectedTop = selectTop.value;
+
+        updateChartTechnologies(chart, jsonData, critere, selectedDevType, selectedTop, divIdTitle);
+
+    });
+}
+
+
+function addEventToDropDownTop(selectIdDevType, chart, jsonData, critere, selectIdTop, divIdTitle) {
+    // Récupérer le <select> existant via son ID
+    var selectElement = document.getElementById(selectIdTop);
+    if (!selectElement) {
+        console.error(`Aucun élément <select> trouvé avec l'ID : ${selectIdTop}`);
+        return;
+    }
+
+    // Associer un événement 'change' au <select>
+    selectElement.addEventListener('change', function() {
+        // Récupérer la valeur sélectionnée
+        var selectedTop = this.value;
+        var selectDevType = document.getElementById(selectIdDevType);
+        var selectedDevType = selectDevType.value;
+
+        updateChartTechnologies(chart, jsonData, critere, selectedDevType, selectedTop, divIdTitle);
+
+    });
+}
+
+
+function addDevTypeToDropDownTemporaire(selectIdDevType, jsonData) {
+    // Récupérer le <select> existant via son ID
+    var selectElement = document.getElementById(selectIdDevType);
+    if (!selectElement) {
+        console.error(`Aucun élément <select> trouvé avec l'ID : ${selectIdDevType}`);
+        return;
+    }
+
+    // Effacer les options actuelles 
+    selectElement.innerHTML = '';
+
+    // Récupérer la liste des pays et les trier
+    let devTypes = getDevType(jsonData);
+
+    // Ajouter chaque pays au <select> avec les styles donnés
+    for (let i = 0; i < devTypes.length; i++) {
+        let option = document.createElement('option');
+        option.value = devTypes[i];
+        option.text = devTypes[i];
+        option.style.color = "black"; // Applique le style donné
+        option.style.backgroundColor = "white"; // Applique le style donné
+        selectElement.appendChild(option);
+    }
+
+}
 
 function updateChart(chart, country, jsonData, critere, anneeExp=null) {
 
@@ -480,6 +583,64 @@ function updateChart(chart, country, jsonData, critere, anneeExp=null) {
     // Mise à jour des données du dataset principal
     if (chart.data.datasets.length > 0) {
         chart.data.datasets[0].data = sortedRevenus; // Met à jour les données uniquement
+    } else {
+        console.error("Le graphique ne contient aucun dataset pour mettre à jour les données.");
+    }
+
+    // Mise à jour du graphique
+    chart.update();
+}
+
+function updateChartTechnologies(chart, jsonData, critere, devType, top, divIdTitle) {
+
+    const {criteres, proportions} = calculerProportionsParCritere(jsonData, critere, devType, top);
+
+    // Séparation des critères en numériques et non numériques
+    const numericData = [];
+    const nonNumericData = [];
+
+    criteres.forEach((critere, index) => {
+        const proportion = proportions[index];
+        if (!isNaN(parseFloat(critere))) {
+            numericData.push({ critere: parseFloat(critere), proportion });
+        } else {
+            nonNumericData.push({ critere, proportion });
+        }
+    });
+
+    // Tri des données numériques
+    numericData.sort((a, b) => a.critere - b.critere);
+
+    // Recombinaison des données triées : numériques d'abord, non numériques ensuite
+    const sortedData = [
+        ...numericData.map(({ critere, proportion }) => ({ critere: critere.toString(), proportion })),
+        ...nonNumericData
+    ];
+
+    const sortedLabels = sortedData.map(item => item.critere);
+    const sortedProportions = sortedData.map(item => item.proportion);
+
+    // Mise à jour du titre du graphique en fonction de l'ID de la div
+    const divElement = document.getElementById(divIdTitle);
+    if (divElement) {
+        const h6Element = divElement.querySelector('h6');
+        if (h6Element) {
+            const titreActuel = h6Element.textContent;
+            const partieApresTop = titreActuel.substring(titreActuel.indexOf(' ') + 2);
+            h6Element.textContent = `Top ${top} ${partieApresTop}`;
+        } else {
+            console.error("L'élément h6 n'a pas été trouvé dans la div spécifiée.");
+        }
+    } else {
+        console.error("La div spécifiée n'a pas été trouvée.");
+    }
+
+    // Mise à jour des labels
+    chart.data.labels = sortedLabels;
+
+    // Mise à jour des données du dataset principal
+    if (chart.data.datasets.length > 0) {
+        chart.data.datasets[0].data = sortedProportions; // Met à jour les données uniquement
     } else {
         console.error("Le graphique ne contient aucun dataset pour mettre à jour les données.");
     }
@@ -594,4 +755,48 @@ function calculerListeRevenusMoyensSelonPlateforme(jsonData, critere, pays, anne
     const revenusMoyens = resultats.map(res => res.revenuMoyen);
 
     return { plateformes, revenusMoyens };
+}
+
+
+function calculerProportionsParCritere(jsonData, critere, devType, top) {
+
+    const proportionsParCritere = {};
+
+    // Parcourir les données JSON
+    jsonData.forEach(item => {
+        const valeurCritere = item[critere]; // Valeur du critère
+        const typeDev = item.DevType; // Tmétier
+
+        // Filtrer les données en fonction du métier
+        if (typeDev !== devType) {
+            return; // Ignorer les données qui ne correspondent pas au métier
+        }
+
+        if (valeurCritere) {
+            // Extraire les critères sans doublons
+            const criteres = valeurCritere.split(";").map(c => c.trim()).filter(Boolean);
+            criteres.forEach(critere => {
+                if (!proportionsParCritere[critere]) {
+                    proportionsParCritere[critere] = { count: 0 };
+                }
+                proportionsParCritere[critere].count++;
+            });
+        }
+    });
+
+    // Calculer les proportions
+    const totalItems = jsonData.filter(item => item.DevType === devType).length;
+    const resultats = Object.keys(proportionsParCritere)
+        .map(critere => {
+            const { count } = proportionsParCritere[critere];
+            return { critere, proportion: ((count / totalItems) * 100).toFixed(2) };
+        })
+        .sort((a, b) => b.proportion - a.proportion) // Tri par ordre décroissant des proportions
+        .slice(0, top); // Garder seulement les x (top) plus grandes proportions
+
+    // Extraire les critères et les proportions
+    const criteres = resultats.map(res => res.critere);
+    const proportions = resultats.map(res => res.proportion);
+
+    return { criteres, proportions };
 }

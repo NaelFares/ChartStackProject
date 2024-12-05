@@ -37,8 +37,8 @@
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"> </script>
   <script src="../charts/utils.js"></script>
   <script src="../charts/configurationURL.js"></script>
-  <script src="../charts/revenuMoyen_ef_experience.js"></script>
-  <script src="../charts/revenuMoyen_ef_etudes.js"></script>
+  <script src="../charts/top5_os.js"></script>
+  <script src="../charts/top5_outilsComm.js"></script>
   <script src="../charts/main.js"></script>
   <link href="../assets/css/style.css" rel="stylesheet" />
 </head>
@@ -115,9 +115,9 @@
         <!-- Colonne 1 : Graphique avec deux selects -->
         <div class="col-lg-6 col-12 mt-4">
           <div class="card shadow h-100">
-            <div class="card-header pb-0 p-3">
-              <h6 class="mb-0"><strong>Top 5</strong> des <strong>systèmes d’exploitation utilisés</strong>
-                par les professionnels dans le cadre de leur travail en <strong>fonction de leur métier</strong></h6>
+            <div class="card-header pb-0 p-3" id="titre-os">
+              <h6 class="mb-0">Top 5 des systèmes d’exploitation utilisés
+                par les professionnels dans le cadre de leur travail en fonction de leur métier</h6>
             </div>
             <div class="card-body p-3">
               <div class="chart mb-3">
@@ -127,24 +127,24 @@
               <div class="d-flex justify-content">
                 <div class="form-group mx-1">
                   <label for="selectContinentTopOSUtilise" class="form-label">Continent</label>
-                  <select class="form-select bg-primary text-white" id="selectContinentTopOSUtilise" style="width: 150px; min-width: 150px;">
-                    <option value="Amérique" style="color: black; background-color: white;"></option>
-                    <option value="Europe" style="color: black; background-color: white;"></option>
+                  <select class="continents form-select bg-primary text-white" id="selectContinentTopOSUtilise" style="width: 150px; min-width: 150px;">
+                    <option value="Amérique" style="color: black; background-color: white;">Amérique</option>
+                    <option value="Europe" style="color: black; background-color: white;">Europe</option>
                   </select>
                 </div>
                 <div class="form-group mx-1">
                   <label for="selectMetierTopOSUtilise" class="form-label">Métier</label>
-                  <select class="form-select bg-primary text-white" id="selectMetierTopOSUtilise" style="width: 150px; min-width: 150px;">
+                  <select class="form-select bg-primary text-white" id="selectMetierTopOSUtilise" style="width: 300px; min-width: 150px;">
                     <option value="Métier" style="color: black; background-color: white;"></option>
                   </select>
                 </div>
                 <div class="form-group mx-1">
                   <label for="selecTopOSUtilise" class="form-label">Top</label>
-                  <select class="form-select bg-primary text-white" id="selecTopOSUtilise" style="width: 150px; min-width: 150px;">
-                    <option value="5" style="color: black; background-color: white;"></option>
-                    <option value="6" style="color: black; background-color: white;"></option>
-                    <option value="7" style="color: black; background-color: white;"></option>
-                    <option value="8" style="color: black; background-color: white;"></option>
+                  <select class="form-select bg-primary text-white" id="selectTopOSUtilise" style="width: 80px;">
+                    <option value="5" style="color: black; background-color: white;">5</option>
+                    <option value="6" style="color: black; background-color: white;">6</option>
+                    <option value="7" style="color: black; background-color: white;">7</option>
+                    <option value="8" style="color: black; background-color: white;">8</option>
                   </select>
                 </div>
               </div>
@@ -155,10 +155,9 @@
         <!-- Colonne 2 : Graphique avec deux selects -->
         <div class="col-lg-6 col-12 mt-4">
           <div class="card shadow h-100">
-            <div class="card-header pb-0 p-3">
-              <h6 class="mb-0"><strong>Top 5 </strong>des <strong>outils de 
-                communication utilisés</strong> par les professionnels dans le cadre de leur travail en 
-                <strong>fonction de leur métier</strong></h6>
+            <div class="card-header pb-0 p-3" id="titre-com">
+              <h6 class="mb-0">Top 5 des outils de 
+                communication utilisés par les professionnels dans le cadre de leur travail en fonction de leur métier</h6>
             </div>
             <div class="card-body p-3">
               <div class="chart mb-3">
@@ -168,24 +167,24 @@
               <div class="d-flex justify-content">
                 <div class="form-group mx-1">
                   <label for="selectContinentTopOutilComm" class="form-label">Continent</label>
-                  <select class="form-select bg-primary text-white" id="selectContinentTopOutilComm" style="width: 150px; min-width: 150px;">
-                    <option value="Amérique" style="color: black; background-color: white;"></option>
-                    <option value="Europe" style="color: black; background-color: white;"></option>
+                  <select class="continents form-select bg-primary text-white" id="selectContinentTopOutilComm" style="width: 150px; min-width: 150px;">
+                    <option value="Amérique" style="color: black; background-color: white;">Amérique</option>
+                    <option value="Europe" style="color: black; background-color: white;">Europe</option>
                   </select>
                 </div>
                 <div class="form-group mx-1">
                   <label for="selectMetierTopOutilComm" class="form-label">Métier</label>
-                  <select class="form-select bg-primary text-white" id="selectMetierTopOutilComm" style="width: 150px; min-width: 150px;">
+                  <select class="form-select bg-primary text-white" id="selectMetierTopOutilComm" style="width: 300px; min-width: 150px;">
                     <option value="Métier" style="color: black; background-color: white;"></option>
                   </select>
                 </div>
                 <div class="form-group mx-1">
                   <label for="selecTopOutilComm" class="form-label">Top</label>
-                  <select class="form-select bg-primary text-white" id="selecTopOutilComm" style="width: 150px; min-width: 150px;">
-                    <option value="5" style="color: black; background-color: white;"></option>
-                    <option value="6" style="color: black; background-color: white;"></option>
-                    <option value="7" style="color: black; background-color: white;"></option>
-                    <option value="8" style="color: black; background-color: white;"></option>
+                  <select class="form-select bg-primary text-white" id="selectTopOutilComm" style="width: 80px;">
+                    <option value="5" style="color: black; background-color: white;">5</option>
+                    <option value="6" style="color: black; background-color: white;">6</option>
+                    <option value="7" style="color: black; background-color: white;">7</option>
+                    <option value="8" style="color: black; background-color: white;">8</option>
                   </select>
                 </div>
               </div>

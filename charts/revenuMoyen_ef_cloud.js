@@ -72,6 +72,10 @@ function loadChartRevenuMoyenEfCloud(jsonData, critere) {
                     title: {
                         display: true,
                         text: 'Revenus Moyens (€)'
+                    },
+                    ticks: {
+                        autoSkip: false, // Désactiver l'échantillonnage des ticks
+                        minRotation: 30  // Rotation minimale des labels
                     }
                 },
                 x: {

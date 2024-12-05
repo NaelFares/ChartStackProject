@@ -15,19 +15,23 @@ function loadChartTopOsUtilises(jsonData, critere) {
         console.log("Graphique existant supprimé.");
     }
 
-    // Extraction des critères et revenus moyens
-    const { criteres, revenusMoyens } = calculerListeRevenusMoyens(jsonData, critere, "Tous");
+    addDevTypeToDropDownTemporaire("selectMetierTopOSUtilise", jsonData);
+
+    let devType = document.getElementById('selectMetierTopOSUtilise').value;
+
+    // Extraction des critères et proportions
+    const { criteres, proportions } = calculerProportionsParCritere(jsonData, critere, devType, 5);
 
     // Séparation des données numériques et non numériques
     const numericData = [];
     const nonNumericData = [];
 
     criteres.forEach((critere, index) => {
-        const revenu = revenusMoyens[index];
+        const proportion = proportions[index];
         if (!isNaN(parseFloat(critere))) {
-            numericData.push({ critere: parseFloat(critere), revenu });
+            numericData.push({ critere: parseFloat(critere), proportion });
         } else {
-            nonNumericData.push({ critere, revenu });
+            nonNumericData.push({ critere, proportion });
         }
     });
 
@@ -36,54 +40,61 @@ function loadChartTopOsUtilises(jsonData, critere) {
 
     // Recombinaison des données triées : numériques d'abord, non numériques ensuite
     const sortedData = [
-        ...numericData.map(({ critere, revenu }) => ({ critere: critere.toString(), revenu })),
+        ...numericData.map(({ critere, proportion }) => ({ critere: critere.toString(), proportion })),
         ...nonNumericData
     ];
 
     const sortedLabels = sortedData.map(item => item.critere);
-    const sortedRevenus = sortedData.map(item => item.revenu);
-
-    const chartRevenuMoyenEfExperience = document.getElementById('chartRevenuMoyenEfExperience');
+    const sortedProportions = sortedData.map(item => item.proportion);
 
     // Création du graphique à barres avec légendes
-    var chart = new Chart(chartRevenuMoyenEfExperience, {
+    var chart = new Chart(canvas, {
         type: 'bar',
         data: {
             labels: sortedLabels,
             datasets: [{
-                label: 'Revenus moyens',
-                data: sortedRevenus,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)', // Couleur des barres
-                borderColor: 'rgba(75, 192, 192, 1)',       // Couleur des bordures
+                label: 'Proportion d\'utilisation',
+                data: sortedProportions,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1
             }]
         },
         options: {
             plugins: {
-                legend: {
-                    display: true, // Affiche la légende
-                    position: 'top'
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y.toFixed(1) + '%';
+                        }
+                    }
                 }
             },
             scales: {
                 y: {
                     beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    },
                     title: {
                         display: true,
-                        text: 'Revenus Moyens (€)'
+                        text: 'Proportion d\'utilisation'
                     }
                 },
                 x: {
                     title: {
                         display: true,
-                        text: "Années d'expériences"
+                        text: "Système d'exploitation professionnel"
                     }
                 }
             }
         }
     });
 
-    addCountriesToDropDown("selectPaysEfExperience", chart, jsonData, critere);
+    addDevTypeToDropDown("selectMetierTopOSUtilise", chart, jsonData, critere, "selectTopOSUtilise", "titre-os");
+    addEventToDropDownTop("selectMetierTopOSUtilise", chart, jsonData, critere, "selectTopOSUtilise", "titre-os")
 
     return chart;
 }
