@@ -759,13 +759,12 @@ function calculerListeRevenusMoyensSelonPlateforme(jsonData, critere, pays, anne
 
 
 function calculerProportionsParCritere(jsonData, critere, devType, top) {
-
     const proportionsParCritere = {};
 
     // Parcourir les données JSON
     jsonData.forEach(item => {
         const valeurCritere = item[critere]; // Valeur du critère
-        const typeDev = item.DevType; // Tmétier
+        const typeDev = item.DevType; // Métier
 
         // Filtrer les données en fonction du métier
         if (typeDev !== devType) {
@@ -784,12 +783,17 @@ function calculerProportionsParCritere(jsonData, critere, devType, top) {
         }
     });
 
-    // Calculer les proportions
-    const totalItems = jsonData.filter(item => item.DevType === devType).length;
+    // Calculer le total des critères individuels
+    let totalCriteres = 0;
+    Object.values(proportionsParCritere).forEach(entry => {
+        totalCriteres += entry.count;
+    });
+
+    // Calculer les proportions par rapport au total des critères
     const resultats = Object.keys(proportionsParCritere)
         .map(critere => {
             const { count } = proportionsParCritere[critere];
-            return { critere, proportion: ((count / totalItems) * 100).toFixed(2) };
+            return { critere, proportion: ((count / totalCriteres) * 100).toFixed(2) };
         })
         .sort((a, b) => b.proportion - a.proportion) // Tri par ordre décroissant des proportions
         .slice(0, top); // Garder seulement les x (top) plus grandes proportions
