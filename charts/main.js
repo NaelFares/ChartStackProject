@@ -72,7 +72,8 @@ function loadChartByPage(output, pageName) {
         case "dashboard2":
             return loadChartRevenuMoyenEfCloud(output, "PlatformHaveWorkedWith"), loadChartRevenuMoyenEfFramework(output, "WebframeHaveWorkedWith");
         case "dashboard3":
-            return loadChartTopOsUtilises(output, "OpSysProfessionaluse");
+            return loadChartTopOsUtilises(output, "OpSysProfessionaluse"), loadChartTopOutilCommUtilise(output, "OfficeStackSyncHaveWorkedWith");
+
         default:
             console.error("Nom de page inconnu :", pageName);
             return null;
@@ -92,6 +93,8 @@ function loadChartByIdSelect(output, idSelect) {
             return loadChartRevenuMoyenEfFramework(output, "WebframeHaveWorkedWith");
         case "selectContinentTopOSUtilise":
             return loadChartTopOsUtilises(output, "OpSysProfessionaluse");
+        case "selectContinentTopOutilComm":
+            return loadChartTopOutilCommUtilise(output, "OfficeStackSyncHaveWorkedWith");
         default:
             console.error("Id Select introuvable :", idSelect);
             return null;

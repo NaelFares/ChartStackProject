@@ -193,57 +193,7 @@ function convertToEuros(value, currencyCode) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Fonction pour récupérer les deux fichiers JSON
-function getAll(isArray=false) {
-    // Définir les chemins des fichiers
-    let file1 = "../data/survey_results_NA.json";
-    let file2 = "../data/survey_results_WE.json";
-
-    try {
-        // Lire et parser les fichiers JSON
-        const json1 = JSON.parse(fs.readFileSync(file1, 'utf8'));
-        const json2 = JSON.parse(fs.readFileSync(file2, 'utf8'));
-
-        // Fusionner en fonction du type
-        const mergedJson = isArray 
-            ? { data: [...json1, ...json2] } // Si tableaux, les combiner sous une clé "data"
-            : { ...json1, ...json2 };       // Sinon fusionner les objets
-
-        return mergedJson;
-
-    } catch (error) {
-        console.error('Erreur lors de la fusion des fichiers JSON:', error.message);
-        return null;
-    }
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// Trier les documents par pays
-function getDataByCountry(country, jsonFiles) {
-    let result = [];  // Créer un tableau pour stocker les résultats
-
-    // Parcourir les fichiers JSON
-    for (let key in jsonFiles) {
-        let item = jsonFiles[key];
-
-        // Si l'élément correspond au pays recherché, l'ajouter au résultat
-        if (item.Country === country) {
-            // Vérifier si le tableau est déjà vide ou non
-            let existingCountryIndex = result.findIndex(obj => obj[country]);
-
-            if (existingCountryIndex === -1) {
-                // Si ce pays n'existe pas encore dans le tableau, ajouter un objet avec ce pays et son tableau de documents
-                result.push({ [country]: [item] });
-            } else {
-                // Si le pays existe déjà, ajouter le document à son tableau
-                result[existingCountryIndex][country].push(item);
-            }
-        }
-    }
-
-    return result;  // Retourner le tableau avec un objet par pays, contenant tous ses documents
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -435,7 +385,7 @@ function addAnneeExpToDropDown(selectIdAnneExp, chart, jsonData, critere, select
         var selectedCountry = selectCountry.value;
 
         updateChart(chart, selectedCountry, jsonData, critere, selectedAnneeExp);
-      
+    
     
     });
 }
@@ -544,6 +494,7 @@ function updateChart(chart, country, jsonData, critere, anneeExp=null) {
             break;
         }
         case "dashboard3": {
+            // Cas traité dans la fonction updateChartTechnologies
             break;
         }
         default: {

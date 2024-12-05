@@ -94,7 +94,7 @@ function loadChartTopOsUtilises(jsonData, critere) {
     });
 
     addDevTypeToDropDown("selectMetierTopOSUtilise", chart, jsonData, critere, "selectTopOSUtilise", "titre-os");
-    addEventToDropDownTop("selectMetierTopOSUtilise", chart, jsonData, critere, "selectTopOSUtilise", "titre-os")
+    addEventToDropDownTop("selectMetierTopOSUtilise", chart, jsonData, critere, "selectTopOSUtilise", "titre-os");
 
     return chart;
 }
