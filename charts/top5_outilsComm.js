@@ -1,6 +1,8 @@
 function loadChartTopOutilCommUtilise(jsonData, critere) {
 
-    const canvas = document.getElementById('chartTopCommUtilise');
+    const canvas = document.getElementById('chartTopCommUtilise'); 
+    canvas.width = 450;  // Largeur en pixels
+    canvas.height = 450;
 
     // Vérifier si le canvas existe
     if (!canvas) {
@@ -49,18 +51,20 @@ function loadChartTopOutilCommUtilise(jsonData, critere) {
 
     // Création du graphique à barres avec légendes
     var chart = new Chart(canvas, {
-        type: 'bar',
+        type: 'doughnut',
         data: {
             labels: sortedLabels,
             datasets: [{
                 label: 'Proportion d\'utilisation',
                 data: sortedProportions,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
+                //backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                //borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1
             }]
         },
         options: {
+            responsive: true,           // Permet au graphique de s'ajuster dynamiquement
+            maintainAspectRatio: false, // Permet de ne pas conserver l'aspect ratio par défaut
             plugins: {
                 tooltip: {
                     callbacks: {
