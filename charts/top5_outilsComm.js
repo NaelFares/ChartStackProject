@@ -58,62 +58,44 @@ function loadChartTopOutilCommUtilise(jsonData, critere) {
                 label: 'Proportion d\'utilisation',
                 data: sortedProportions,
                 backgroundColor: [
-                                'rgba(255, 215, 0, 0.2)',
-                                'rgba(192, 192, 192, 0.2)',
-                                'rgba(205, 127, 50, 0.2)',
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(255, 99, 132, 0.2)',
-                                'rgba(255, 171, 64, 0.2)',
-                                'rgba(130, 3, 110, 0.2)',
-                                'rgba(75, 192, 192, 0.2)'
-                            ],
+                    'rgba(255, 215, 0, 0.2)',
+                    'rgba(192, 192, 192, 0.2)',
+                    'rgba(205, 127, 50, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(255, 171, 64, 0.2)',
+                    'rgba(130, 3, 110, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                ],
                 borderColor: [
-                            'rgba(255, 215, 0, 1)',
-                            'rgba(192, 192, 192, 1)',
-                            'rgba(205, 127, 50, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(255, 171, 64, 1)',
-                            'rgba(130, 3, 110, 1)',
-                            'rgba(75, 192, 192, 1)'
-                        ],
+                    'rgba(255, 215, 0, 1)',
+                    'rgba(192, 192, 192, 1)',
+                    'rgba(205, 127, 50, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(255, 171, 64, 1)',
+                    'rgba(130, 3, 110, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
                 borderWidth: 1
             }]
         },
         options: {
-            responsive: true,           // Permet au graphique de s'ajuster dynamiquement
-            maintainAspectRatio: false, // Permet de ne pas conserver l'aspect ratio par défaut
+            responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return context.parsed.y.toFixed(1) + '%';
+                            // Utilisez context.raw pour accéder directement à la valeur brute
+                            return context.label + ': ' + context.raw.toFixed(1) + '%';
                         }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return value + '%';
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: 'Proportion d\'utilisation'
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: "Outils de communication"
                     }
                 }
             }
         }
     });
+    
 
     addDevTypeToDropDown("selectMetierTopOutilComm", chart, jsonData, critere, "selectTopOutilComm", "titre-com");
     addEventToDropDownTop("selectMetierTopOutilComm", chart, jsonData, critere, "selectTopOutilComm", "titre-com");
