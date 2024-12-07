@@ -71,7 +71,7 @@ function loadChartRevenuMoyenEfCloud(jsonData, critere) {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Revenus Moyens (€)'
+                        text: "Plateforme de cloud utilisée"
                     },
                     ticks: {
                         autoSkip: false, // Désactiver l'échantillonnage des ticks
@@ -81,7 +81,7 @@ function loadChartRevenuMoyenEfCloud(jsonData, critere) {
                 x: {
                     title: {
                         display: true,
-                        text: "Plateforme de cloud utilisée"
+                        text: 'Revenus Moyens (€)'
                     },
                     ticks: {
                         autoSkip: false, // Désactiver l'échantillonnage des ticks

@@ -275,26 +275,6 @@ function getDevType(jsonData) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function updateContinent(chart, country, jsonData) {
-
-    let tabData = treatData(country,jsonData);
-    let years = tabData[0];
-    let values = tabData[1];
-
-    chart.data.labels = years;
-    
-    chart.data.datasets = [
-        {
-            label: "Nombre de médailles gagnées par année : " + country,
-            data: values,
-        }
-    ];
-    
-    chart.update();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 function addCountriesToDropDown(selectIdCountry, chart, jsonData, critere, selectIdAnneeExp = null) {
     // Récupérer le <select> existant via son ID
     var selectElement = document.getElementById(selectIdCountry);
@@ -503,30 +483,38 @@ function updateChart(chart, country, jsonData, critere, anneeExp=null) {
         }
     }
 
-    // Séparation des critères en numériques et non numériques
-    const numericData = [];
-    const nonNumericData = [];
+    // Créer un tableau d'objets combinant critères et revenus
+    let combinedData = params.map((param, index) => ({
+        param,
+        revenu: revenusMoyens[index]
+    }));
 
-    params.forEach((param, index) => {
-        const revenu = revenusMoyens[index];
-        if (!isNaN(parseFloat(param))) {
-            numericData.push({ param: parseFloat(param), revenu });
-        } else {
-            nonNumericData.push({ param, revenu });
+    // Tri personnalisé
+    combinedData.sort((a, b) => {
+        // Prioriser "Moins d'un an" ou autre valeur spécifique si nécessaire
+        if (a.param === "Less than 1 year") return -1;
+        if (b.param === "Less than 1 year") return 1;
+
+        // Convertir les valeurs en nombres si elles sont numériques
+        const numA = !isNaN(a.param) ? parseFloat(a.param) : null;
+        const numB = !isNaN(b.param) ? parseFloat(b.param) : null;
+
+        // Si les deux sont numériques, comparer leurs valeurs
+        if (numA !== null && numB !== null) {
+            return numA - numB;
         }
+
+        // Si l'un est numérique et pas l'autre, le numérique vient en premier
+        if (numA !== null) return -1;
+        if (numB !== null) return 1;
+
+        // Les deux ne sont pas numériques, comparer comme chaînes
+        return a.param.localeCompare(b.param);
     });
 
-    // Tri des données numériques
-    numericData.sort((a, b) => a.param - b.param);
-
-    // Recombinaison des données triées : numériques d'abord, non numériques ensuite
-    const sortedData = [
-        ...numericData.map(({ param, revenu }) => ({ param: param.toString(), revenu })),
-        ...nonNumericData
-    ];
-
-    const sortedLabels = sortedData.map(item => item.param);
-    const sortedRevenus = sortedData.map(item => item.revenu);
+    // Extraire les labels et revenus triés
+    const sortedLabels = combinedData.map(item => item.param);
+    const sortedRevenus = combinedData.map(item => item.revenu);
 
     // Mise à jour des labels
     chart.data.labels = sortedLabels;

@@ -18,30 +18,38 @@ function loadChartRevenuMoyenEfExperience(jsonData, critere) {
     // Extraction des critères et revenus moyens
     const { criteres, revenusMoyens } = calculerListeRevenusMoyens(jsonData, critere, "Tous");
 
-    // Séparation des données numériques et non numériques
-    const numericData = [];
-    const nonNumericData = [];
+    // Créer un tableau d'objets combinant critères et revenus
+    let combinedData = criteres.map((critere, index) => ({
+        critere,
+        revenu: revenusMoyens[index]
+    }));
 
-    criteres.forEach((critere, index) => {
-        const revenu = revenusMoyens[index];
-        if (!isNaN(parseFloat(critere))) {
-            numericData.push({ critere: parseFloat(critere), revenu });
-        } else {
-            nonNumericData.push({ critere, revenu });
+    // Tri personnalisé
+    combinedData.sort((a, b) => {
+        // Prioriser "Moins d'un an" ou autre valeur spécifique si nécessaire
+        if (a.critere === "Less than 1 year") return -1;
+        if (b.critere === "Less than 1 year") return 1;
+
+        // Convertir les valeurs en nombres si elles sont numériques
+        const numA = !isNaN(a.critere) ? parseFloat(a.critere) : null;
+        const numB = !isNaN(b.critere) ? parseFloat(b.critere) : null;
+
+        // Si les deux sont numériques, comparer leurs valeurs
+        if (numA !== null && numB !== null) {
+            return numA - numB;
         }
+
+        // Si l'un est numérique et pas l'autre, le numérique vient en premier
+        if (numA !== null) return -1;
+        if (numB !== null) return 1;
+
+        // Les deux ne sont pas numériques, comparer comme chaînes
+        return a.critere.localeCompare(b.critere);
     });
 
-    // Tri des données numériques
-    numericData.sort((a, b) => a.critere - b.critere);
-
-    // Recombinaison des données triées : numériques d'abord, non numériques ensuite
-    const sortedData = [
-        ...numericData.map(({ critere, revenu }) => ({ critere: critere.toString(), revenu })),
-        ...nonNumericData
-    ];
-
-    const sortedLabels = sortedData.map(item => item.critere);
-    const sortedRevenus = sortedData.map(item => item.revenu);
+    // Extraire les labels et revenus triés
+    const sortedLabels = combinedData.map(item => item.critere);
+    const sortedRevenus = combinedData.map(item => item.revenu);
 
     const chartRevenuMoyenEfExperience = document.getElementById('chartRevenuMoyenEfExperience');
 

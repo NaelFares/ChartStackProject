@@ -71,13 +71,13 @@ function loadChartRevenuMoyenEfFramework(jsonData, critere) {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Revenus Moyens (€)'
+                        text: "Framework utilisé"
                     }
                 },
                 x: {
                     title: {
                         display: true,
-                        text: "Framework utilisé"
+                        text: 'Revenus Moyens (€)'
                     },
                     ticks: {
                         autoSkip: false, // Désactiver l'échantillonnage des ticks
