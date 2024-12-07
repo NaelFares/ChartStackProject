@@ -57,8 +57,26 @@ function loadChartTopOutilCommUtilise(jsonData, critere) {
             datasets: [{
                 label: 'Proportion d\'utilisation',
                 data: sortedProportions,
-                //backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                //borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: [
+                                'rgba(255, 215, 0, 0.2)',
+                                'rgba(192, 192, 192, 0.2)',
+                                'rgba(205, 127, 50, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(255, 171, 64, 0.2)',
+                                'rgba(130, 3, 110, 0.2)',
+                                'rgba(75, 192, 192, 0.2)'
+                            ],
+                borderColor: [
+                            'rgba(255, 215, 0, 1)',
+                            'rgba(192, 192, 192, 1)',
+                            'rgba(205, 127, 50, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(255, 171, 64, 1)',
+                            'rgba(130, 3, 110, 1)',
+                            'rgba(75, 192, 192, 1)'
+                        ],
                 borderWidth: 1
             }]
         },

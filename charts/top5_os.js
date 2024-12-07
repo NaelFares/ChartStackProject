@@ -55,8 +55,26 @@ function loadChartTopOsUtilises(jsonData, critere) {
             datasets: [{
                 label: 'Proportion d\'utilisation',
                 data: sortedProportions,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: [
+                                'rgba(255, 215, 0, 0.2)',
+                                'rgba(192, 192, 192, 0.2)',
+                                'rgba(205, 127, 50, 0.2)',        
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(75, 192, 192, 0.2)'
+                                ],
+                borderColor: [
+                                'rgba(255, 215, 0, 1)',
+                                'rgba(192, 192, 192, 1)',
+                                'rgba(205, 127, 50, 1)',        
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(75, 192, 192, 1)'
+                                ],
                 borderWidth: 1
             }]
         },
