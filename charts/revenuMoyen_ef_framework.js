@@ -45,44 +45,6 @@ function loadChartRevenuMoyenEfFramework(jsonData, critere) {
 
     const chartRevenuMoyenEfFramework = document.getElementById('chartRevenuMoyenEfFramework');
 
-    // Couleurs par défaut
-    const defaultColor = 'rgba(75, 192, 192, 0.2)';
-    const colors = {
-        gold:  'rgba(255, 215, 0, 0.5)',
-        silver: 'rgba(192, 192, 192, 0.5)',
-        bronze: 'rgba(205, 127, 50, 0.5)'
-    };
-    const defaultBorder = 'rgba(75, 192, 192, 1)';
-    const borders = {
-        gold:  'rgba(255, 215, 0, 1)',
-        silver: 'rgba(192, 192, 192, 1)',
-        bronze: 'rgba(205, 127, 50, 1)'
-    };
-
-    // Appliquer la couleur par défaut à toutes les barres
-    const backgroundColors = new Array(sortedRevenus.length).fill(defaultColor);
-    const bordersColors = new Array(sortedRevenus.length).fill(defaultBorder);
-
-    // Identifier les 3 valeurs les plus grandes
-    const sortedIndices = [...sortedRevenus]
-        .map((value, index) => ({ value, index }))
-        .sort((a, b) => b.value - a.value) // Tri décroissant
-        .slice(0, 3) // Prendre les 3 plus grandes valeurs
-        .map(item => item.index);
-
-    // Appliquer les couleurs or, argent, bronze aux indices des 3 valeurs les plus élevées
-    if (sortedIndices.length >= 3) {
-        backgroundColors[sortedIndices[0]] = colors.gold;   // Or
-        backgroundColors[sortedIndices[1]] = colors.silver; // Argent
-        backgroundColors[sortedIndices[2]] = colors.bronze;  // Bronze
-    }
-    if (sortedIndices.length >= 3) {
-        bordersColors[sortedIndices[0]] = borders.gold;   // Or
-        bordersColors[sortedIndices[1]] = borders.silver; // Argent
-        bordersColors[sortedIndices[2]] = borders.bronze;  // Bronze
-    }
-
-
     // Création du graphique à barres avec légendes
     var chart = new Chart(chartRevenuMoyenEfFramework, {
         type: 'bar',
@@ -91,8 +53,8 @@ function loadChartRevenuMoyenEfFramework(jsonData, critere) {
             datasets: [{
                 label: 'Revenus moyens',
                 data: sortedRevenus,
-                backgroundColor: backgroundColors, // Couleur des barres
-                borderColor: bordersColors,       // Couleur des bordures
+                backgroundColor: 'rgba(75, 192, 192, 0.2)', // Couleur des barres
+                borderColor: 'rgba(75, 192, 192, 1)',       // Couleur des bordures
                 borderWidth: 1
             }]
         },
