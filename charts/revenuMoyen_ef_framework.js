@@ -1,6 +1,8 @@
 function loadChartRevenuMoyenEfFramework(jsonData, critere) {
 
     const canvas = document.getElementById('chartRevenuMoyenEfFramework');
+    canvas.width = 450;  // Largeur en pixels
+    canvas.height = 450;
 
     // Vérifier si le canvas existe
     if (!canvas) {
@@ -45,45 +47,37 @@ function loadChartRevenuMoyenEfFramework(jsonData, critere) {
 
     const chartRevenuMoyenEfFramework = document.getElementById('chartRevenuMoyenEfFramework');
 
-    // Création du graphique à barres avec légendes
     var chart = new Chart(chartRevenuMoyenEfFramework, {
-        type: 'bar',
+        type: 'radar',
         data: {
             labels: sortedLabels,
             datasets: [{
                 label: 'Revenus moyens',
                 data: sortedRevenus,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)', // Couleur des barres
-                borderColor: 'rgba(75, 192, 192, 1)',       // Couleur des bordures
-                borderWidth: 1
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                pointBackgroundColor: 'rgba(75, 192, 192, 1)'
             }]
         },
         options: {
-            indexAxis: 'y', // Orientation horizontale
-            plugins: {
-                legend: {
-                    display: true, // Affiche la légende
-                    position: 'top'
-                }
-            },
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
-                y: {
+                r: {
                     beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: "Framework utilisé"
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Revenus Moyens (€)'
+                    grid: {
+                        display: false
                     },
                     ticks: {
-                        autoSkip: false, // Désactiver l'échantillonnage des ticks
-                        maxRotation: 90, // Rotation maximale des labels pour éviter les chevauchements
-                        minRotation: 45  // Rotation minimale des labels
+                        display: false
                     }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
                 }
             }
         }

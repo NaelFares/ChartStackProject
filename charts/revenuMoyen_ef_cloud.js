@@ -32,12 +32,12 @@ function loadChartRevenuMoyenEfCloud(jsonData, critere) {
     });
 
     // Tri des données numériques
-    numericData.sort((a, b) => a.critere - b.critere);
+    numericData.sort((a, b) => b.revenu - a.revenu);
 
-    // Recombinaison des données triées : numériques d'abord, non numériques ensuite
+    // Recombinaison des données triées : numériques d'abord, non numériques triés par revenu
     const sortedData = [
         ...numericData.map(({ critere, revenu }) => ({ critere: critere.toString(), revenu })),
-        ...nonNumericData
+        ...nonNumericData.sort((a, b) => b.revenu - a.revenu)
     ];
 
     const sortedLabels = sortedData.map(item => item.critere);
@@ -53,8 +53,18 @@ function loadChartRevenuMoyenEfCloud(jsonData, critere) {
             datasets: [{
                 label: 'Revenus moyens',
                 data: sortedRevenus,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)', // Couleur des barres
-                borderColor: 'rgba(75, 192, 192, 1)',       // Couleur des bordures
+                backgroundColor: sortedRevenus.map((_, index) => {
+                    if (index === 0) return 'rgba(255, 215, 0, 0.5)';      // Or
+                    if (index === 1) return 'rgba(192, 192, 192, 0.5)';    // Argent
+                    if (index === 2) return 'rgba(205, 127, 50, 0.5)';     // Bronze
+                    return 'rgba(75, 192, 192, 0.2)';                      // Couleur par défaut
+                }),
+                borderColor: sortedRevenus.map((_, index) => {
+                    if (index === 0) return 'rgba(255, 215, 0, 1)';      // Or
+                    if (index === 1) return 'rgba(192, 192, 192, 1)';    // Argent
+                    if (index === 2) return 'rgba(205, 127, 50, 1)';     // Bronze
+                    return 'rgba(75, 192, 192, 1)';                      // Couleur par défaut
+                }),
                 borderWidth: 1
             }]
         },
